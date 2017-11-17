@@ -20,6 +20,7 @@ import datetime
 import bs4
 import pymysql
 from contextlib import closing
+import time
 
 log_path = r'%s/log/spider_DEBUG(%s).log' %(os.getcwd(),datetime.datetime.date(datetime.datetime.today()))
 
@@ -58,9 +59,15 @@ class Spider(scrapy.Spider):
         try:
             driver.get('about:blank')
             driver.get(response.url)
-            driver.find_element_by_class_name('checkall').click()
+            while driver.find_elements_by_class_name('checkall'):
+                driver.find_element_by_class_name('checkall').click()
+                print u"等待数据加载完成"
+                time.sleep(2)
+            """
+            <span class="checkall" id="checkall" onclick="checkAll()">一键查看全部</span>
+            <span class="checkpage" id="checkall" onclick="checkPage()">返回分页方式看净值</span>
+            """
             bs_obj = bs4.BeautifulSoup(driver.page_source, 'html.parser')
-
             #log_obj.update_error(bs_obj.prettify(encoding='utf8'))
             e_trs = bs_obj.find('table', id='oTable').tbody.find_all('tr')
             for e_tr in e_trs:
@@ -85,6 +92,8 @@ class Spider(scrapy.Spider):
             if lastest_date.empty:
                 raise Exception('本地数据库没有找到基金代号%s' %item['fund_code'])
             lastest_date = lastest_date.iat[0]
+            lastest_date = datetime.datetime(lastest_date.year, lastest_date.month, lastest_date.day) # 从date格式转为datetime
+
             print "%s的最新净值日期为%s" %(item['fund_code'], lastest_date)
 
             # 净值估算
@@ -92,35 +101,55 @@ class Spider(scrapy.Spider):
             data = [e.get_text(strip=True) for e in e_dl.find('dd',class_='dataNums').find_all('span')]
             data_type = e_dl.find('span', class_='sp01').get_text(strip=True)
             data_date = e_dl.find('span', id='gz_gztime').get_text(strip=True)
-            ser = pd.Series(data+[data_type,data_date],index=['净值','涨跌值','涨跌幅','数据类型','数据日期'])
+            ser = pd.Series(data + [data_type, data_date], index=['净值', '涨跌值', '涨跌幅', '数据类型', '数据日期'])
+            pd.DataFrame(ser).T.to_csv('C:\\Users\\Administrator\\Desktop\\fund_value.csv', encoding='utf8', mode='a')
+
+            # 基金信息
+            e_div = bs_obj.find('div', class_='infoOfFund')
+            e_table = e_div.table
+            df = pd.read_html(e_table.prettify(encoding='utf8'), encoding='utf8')[0]
+            df = pd.DataFrame(np.array(df).reshape(-1,1))
+            df['title'] = df[0].apply(lambda s:re.sub(r'\s','',str(s)).split('：')[0])
+            df['value'] = df[0].apply(lambda s: re.sub(r'\s', '', str(s)).split('：')[1])
+            ser = pd.Series(df['value'].tolist(), index=df['title'].tolist())
+            ser['fund_code'] = item['fund_code']
+            pd.DataFrame(ser).T.to_csv('C:\\Users\\Administrator\\Desktop\\fund_info.csv', encoding='utf8', mode='a')
+
+            #ser = pd.Series(data+[data_type,data_date],index=['净值','涨跌值','涨跌幅','数据类型','数据日期'])
             #ser.to_csv('C:\\Users\\Administrator\\Desktop\\test.csv', encoding='utf8',mode='a')
 
+            """
             # 基金净值
             e_div = bs_obj.find_all('div', class_='poptableWrap singleStyleHeight01')[0] #有三个标签页，分别是净值，分红，评级
             e_table = e_div.table
             df = pd.read_html(e_table.prettify(encoding='utf8'), encoding='utf8', header=0)[0]
 
+            # 此处有时间BUG
             year_num = datetime.datetime.now().year
             df[u'日期'] = pd.to_datetime(df[u'日期'].apply(lambda s:'%s-%s' %(year_num,s)))
+
+            print df[u'日期'].dtype
+            print type(lastest_date)
             df = df[df[u'日期']>lastest_date] # 筛选日期
-            #df[u'日期'] = df[u'日期'].apply(lambda date:datetime.datetime.strftime(date,'%Y-%m-%d'))
-            #print dir(df[u'日期'].iat[0])
-            #print df[u'日期'].iat[0]
 
-            df = df.astype(np.str)
-            df[u'key'] = df[u'日期'].apply(lambda date:"%s/%s" %(item['fund_code'], date))
-            df[u'fund_code'] = item['fund_code']
+            if not df.empty:
+                df = df.astype(np.str)
+                df[u'key'] = df[u'日期'].apply(lambda date:"%s/%s" %(item['fund_code'], date))
+                df[u'fund_code'] = item['fund_code']
 
-            data_str = ','.join(["(%s)" % (','.join(["%s",] * df.shape[1])) for i in range(df.shape[0])])
-            #data_str = ','.join(["(%s)" %(','.join(l)) for l in np.array(df).tolist()])
-            sql = "INSERT INTO `eastmoney_daily_data`(value_date,net_asset_value,accumulative_net_value,daily_growth_rate,crawler_key,fund_code) VALUES%s;" %data_str
-            #print sql #
-            #print np.array(df).tolist()
-            data_l = []
-            for l in np.array(df).tolist():
-                data_l.extend(l)
-            #print data_l
-            mysql_connecter.connect(sql, args=data_l, host='localhost',user='spider',password = 'jlspider', dbname = 'spider', charset='utf8')
+                data_str = ','.join(["(%s)" % (','.join(["%s",] * df.shape[1])) for i in range(df.shape[0])])
+                #data_str = ','.join(["(%s)" %(','.join(l)) for l in np.array(df).tolist()])
+                sql = "INSERT INTO `eastmoney_daily_data`(value_date,net_asset_value,accumulative_net_value,daily_growth_rate,crawler_key,fund_code) VALUES%s;" %data_str
+                #print sql #
+                #print np.array(df).tolist()
+                data_l = []
+                for l in np.array(df).tolist():
+                    data_l.extend(l)
+                #print data_l
+                mysql_connecter.connect(sql, args=data_l, host='localhost',user='spider',password = 'jlspider', dbname = 'spider', charset='utf8')
+            else:
+                print u"无最新数据"
+            """
 
         except:
             log_obj.error("%s（ %s ）中无法解析\n%s" % (self.name, response.url, traceback.format_exc()))

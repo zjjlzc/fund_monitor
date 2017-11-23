@@ -29,21 +29,27 @@ class merger_stock_data(object):
 
 
 if __name__ == '__main__':
+    df = pd.DataFrame([])
     for file in os.listdir('C:\\Users\\Administrator\\Desktop\\stock_data'):
-        data = xlrd.open_workbook('C:\\Users\\Administrator\\Desktop\\stock_data\\%s' %file)
-        df = pd.DataFrame([])
-        for sheet_name in data.sheet_names():
-            table = data.sheet_by_name(sheet_name)
-            stock_code = table.cell(0, 0).value
-            stock_name = table.cell(0, 1).value
-            df0 = pd.read_excel('C:\\Users\\Administrator\\Desktop\\stock_data\\%s' %file, sheet_name=sheet_name, skiprows=[0, ])
+    #file = 'zxc.xlsx'
+        try:
+            data = xlrd.open_workbook('C:\\Users\\Administrator\\Desktop\\stock_data\\%s' %file)
 
-            df0[u'日期'] = df0[u'日期'].astype(np.str)
-            df0['stock_code'] = str(stock_code).replace("'", "")
-            df0['stock_name'] = stock_name
-            df0['key'] = df0['stock_code'] + '/' + df0[u'日期']
-            df0 = df0.drop([u'成交笔数', 'MA1', 'MA2', 'MA3', 'MA4', 'MA5'
-                               , 'MA6'], axis=1)
-            print df0.head(3)
-            df = df.append(df0, ignore_index=True)
-        df.to_excel('C:\\Users\\Administrator\\Desktop\\stock_data\\merged-%s' %file)
+            for i in range(len(data.sheet_names())):
+                table = data.sheet_by_index(i)
+                stock_code = table.cell(0, 0).value
+                stock_name = table.cell(0, 1).value
+                df0 = pd.read_excel('C:\\Users\\Administrator\\Desktop\\stock_data\\%s' %file, sheet_name=i, skiprows=[0, ])
+
+                df0[u'日期'] = df0[u'日期'].astype(np.str)
+                df0['stock_code'] = str(stock_code).replace("'", "")
+                df0['stock_name'] = stock_name
+                df0['key'] = df0['stock_code'] + '/' + df0[u'日期']
+                df0 = df0.drop([u'成交笔数', 'MA1', 'MA2', 'MA3', 'MA4', 'MA5'
+                                   , 'MA6'], axis=1)
+                print df0.head(3)
+                df = df.append(df0, ignore_index=True)
+        except:
+            pass
+    df.columns = ['value_date','opening_price','high_price','low_price','closing_price','trading_volume','turnover','stock_code','stock_name','crawler_key']
+    df.to_csv('C:\\Users\\Administrator\\Desktop\\stock_data\\merged-%s.csv' %'all', encoding='utf8')

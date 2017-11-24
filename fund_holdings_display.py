@@ -197,26 +197,27 @@ class fund_holdings_display(object):
             '002803':0.2,
             '110022':0.4
         }
-        d = {key:float(d[key])/sum(d.values()) for key in d}
+        #d = {key:float(d[key])/sum(d.values()) for key in d}
 
         fund_data = {}
 
-        for key in d:
-            fund_code = key
+        for fund_code in d:
             #print fund_code
-            df = fund_holdings_display.get_data(fund_code)
-            date_d = fund_holdings_display.data_classify(df)
-            fund_data[fund_code] = date_d
+            df = fund_holdings_display.get_data(fund_code) # 获取fund_code的数据
+            date_d = fund_holdings_display.data_classify(df) # 将数据按截止日期分类
+            fund_data[fund_code] = date_d # 存入字典
 
+        # 统计共有的截止日期
         fund_date_set = reduce(lambda x,y:x & y,[set(fund_data[fund_code].keys()) for fund_code in fund_data])
         res = {}
         for date0 in fund_date_set:
             df = pd.DataFrame()
+            # 将同一个截止日期的几个基金按给定权重求和
             for fund_code in fund_data:
                 df0 = fund_data[fund_code][date0]
                 param = d[fund_code]
                 df0['net_value_ratio'] = df0['net_value_ratio'] * param
-                # 怎么合并
+                # 怎么合并?
             res[date0] = df
 
 

@@ -53,6 +53,8 @@ class compare_net_value(object):
 
 
     def simple_cal(self, ser, earnings_type):
+        if ser is None:
+            return None
         df = pd.DataFrame(ser)
         df['max'] = ''
         df['target_col'] = ''
@@ -87,10 +89,10 @@ class compare_net_value(object):
             fund_code_list = f.read().split('\n')
         #fund_code_list = ['001542',]
         date_l = [
-            #['2016-09-30', '2016-10-20', '2017-04-19'],
-            ['2017-03-31', '2017-04-20', '2017-08-20'],
-            ['2017-06-30', '2017-08-21', '2017-10-20'],
-            ['2017-09-30', '2017-10-21', '2020-01-01']
+            # ['2016-09-30', '2016-10-20', '2017-04-19'],
+            # ['2017-03-31', '2017-04-20', '2017-08-20'],
+            # ['2017-06-30', '2017-08-21', '2017-10-20'],
+            ['2017-09-30', '2017-10-21', '2020-01-01'],
         ]
         for fund_code in fund_code_list:
             print u"正在计算基金：", fund_code
@@ -109,18 +111,43 @@ class compare_net_value(object):
                 #    print df.iloc[i,:].tolist()
                 df.loc[:, 'cal_net_asset_value'] = df.loc[:, 'net_asset_value'].apply(lambda x:float(x)/float(df['net_asset_value'].iat[0]))
 
-                df.to_csv(fund_code+'.csv')
-                pd.Series(['fitting_net_value',]).to_csv(fund_code+'.csv', mode='a')
-                pd.DataFrame(self.simple_cal(df['fitting_net_value'],u'收益率')).to_csv(fund_code+'.csv', mode='a')
-                pd.DataFrame(self.simple_cal(df['fitting_net_value'], u'年化收益率')).to_csv(fund_code+'.csv', mode='a')
-                pd.Series(['cal_net_asset_value', ]).to_csv(fund_code+'.csv', mode='a')
-                pd.DataFrame(self.simple_cal(df['cal_net_asset_value'], u'收益率')).to_csv(fund_code + '.csv', mode='a')
-                pd.DataFrame(self.simple_cal(df['cal_net_asset_value'], u'年化收益率')).to_csv(fund_code + '.csv', mode='a')
+                # df.to_csv(fund_code+'.csv')
+                # pd.Series(['fitting_net_value',]).to_csv(fund_code+'.csv', mode='a')
+                # pd.DataFrame(self.simple_cal(df['fitting_net_value'],u'收益率')).to_csv(fund_code+'.csv', mode='a')
+                # pd.DataFrame(self.simple_cal(df['fitting_net_value'], u'年化收益率')).to_csv(fund_code+'.csv', mode='a')
+                # pd.Series(['cal_net_asset_value', ]).to_csv(fund_code+'.csv', mode='a')
+                # pd.DataFrame(self.simple_cal(df['cal_net_asset_value'], u'收益率')).to_csv(fund_code + '.csv', mode='a')
+                # pd.DataFrame(self.simple_cal(df['cal_net_asset_value'], u'年化收益率')).to_csv(fund_code + '.csv', mode='a')
+                df.index.name = fund_code
+                dfx = df.T.copy()
+                #dfx = dfx.join(pd.Series(['fitting_net_value',],name = 0))
+                ser = self.simple_cal(df['fitting_net_value'],u'收益率')
+                ser.name = fund_code + u'拟合净值收益率'
+                ser.index = ['fund_code', 'net_asset_value', 'fitting_net_value']
+                dfx = dfx.join(ser)
+
+                ser = self.simple_cal(df['fitting_net_value'],u'年化收益率')
+                ser.name = fund_code + u'拟合净值年化收益率'
+                ser.index = ['fund_code', 'net_asset_value','fitting_net_value']
+                dfx = dfx.join(ser)
+
+                ser = self.simple_cal(df['cal_net_asset_value'],u'收益率')
+                ser.name = fund_code + u'折算净值收益率'
+                ser.index = ['fund_code', 'net_asset_value', 'fitting_net_value']
+                dfx = dfx.join(ser)
+
+                ser = self.simple_cal(df['cal_net_asset_value'],u'年化收益率')
+                ser.name = fund_code + u'折算净值年化收益率'
+                ser.index = ['fund_code', 'net_asset_value', 'fitting_net_value']
+                dfx = dfx.join(ser)
+
+                dfx.reindex(reversed(dfx.columns), axis=1).to_csv('compare_net_value.csv', mode='a')
 
                 print u"耗时：", time.time() - start_time
             except:
                 print traceback.format_exc()
 
+        pd.read_csv('compare_net_value.csv').T.to_csv('compare_net_value.csv')
 
 
 

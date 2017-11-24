@@ -174,7 +174,7 @@ class cal_fitting_net_value(object):
 
     def cal_net_value(self, fund_code, cut_off_date, date_str1, date_str2):
         df = self.get_fund_holdings_data(fund_code, cut_off_date)
-        if df.empty:
+        if df.empty or df is None:
             print u'%s has no fund_holdings data with cut_off_date: %s' % (fund_code, cut_off_date)
             return None
             #raise Exception(u'%s has no fund_holdings data with cut_off_date: %s' % (fund_code, cut_off_date))

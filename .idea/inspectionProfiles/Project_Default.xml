@@ -6,6 +6,7 @@
         <list>
           <option value="cal_fitting_net_value.combine_net_value" />
           <option value="type.__getitem__" />
+          <option value="type.__setitem__" />
         </list>
       </option>
     </inspection_tool>

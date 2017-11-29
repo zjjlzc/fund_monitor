@@ -9,6 +9,8 @@
 """
 import sys
 import os
+
+import datetime
 import pandas as pd
 from contextlib import closing
 import pymysql
@@ -17,12 +19,15 @@ import numpy as np
 import re
 import time
 import json
+import copy
 
 sys.path.append(sys.prefix + "\\Lib\\MyWheels")
 reload(sys)
 sys.setdefaultencoding('utf8')
 import requests_manager
 requests_manager = requests_manager.requests_manager()
+import api51
+api51 = api51.api51()
 
 
 import set_log  # log_obj.debug(文本)  "\x1B[1;32;41m (文本)\x1B[0m"
@@ -31,14 +36,26 @@ log_obj = set_log.Logger('cal_fitting_net_value.log', set_log.logging.WARNING,
                          set_log.logging.DEBUG)
 log_obj.cleanup('cal_fitting_net_value.log', if_cleanup=True)  # 是否需要在每次运行程序前清空Log文件
 
-user_key = '83E30DFE2C71435EA71000DCAFC4AD84'
+user_key = '1923eae2a3054d4c92a7eb74d7f65396'
 
 with open('stock_blacklist.txt','r') as f:
     stock_blacklist = f.read().split('\n')
 
+d = {
+    'prod_code':'000001.SS',
+    'candle_mode':'0',
+    'data_count':'1000',
+    'get_type':'offset',
+    'search_direction':'1',
+    'candle_period':'6',
+}
+json_data = api51.connect(user_key, d)
+df = pd.DataFrame(json_data['data']['candle']['000001.SS'])
+date_ser = df[0].apply(lambda num:datetime.datetime.strptime(str(num),'%Y%m%d'))
+
 class cal_fitting_net_value(object):
     def __init__(self):
-        self.date_list = []
+        pass#self.date_list = []
 
     def cal1(self):
         file0 = 'ranking.xlsx'
@@ -46,108 +63,139 @@ class cal_fitting_net_value(object):
         df = pd.DataFrame([])
         for sheet_name in data.sheet_names():
             df0 = pd.read_excel(file0, sheet_name=sheet_name)
-            print np.array(df0)
+            #print np.array(df0)
+
+    # def get_stock_data(self, stock_code, date_str1, date_str2):
+    #     # 修正股票代码
+    #     #stock_code = stock_code.split('.')[0]
+    #     if stock_code in stock_blacklist:
+    #         print u"股票%s位于黑名单内" %stock_code
+    #         return None
+    #
+    #     if re.search(r'[^\d]+', stock_code) and len(re.search(r'[^\d]+', stock_code).group()) == len(stock_code):
+    #         stock_code = stock_code.split('.')[0]
+    #     else:
+    #         stock_code = re.search(r'\d+', stock_code).group()
+    #     sql = """
+    #     SELECT `stock_code`,`closing_price`,`value_date` FROM
+    #     (
+    #         (SELECT `stock_code`,`closing_price`,`value_date` AS `existed_value_date`
+    #         FROM `stock_daily_data`
+    #         WHERE `stock_code`="%s" AND `value_date` BETWEEN str_to_date("%s", "%s") AND str_to_date("%s", "%s")) L
+    #
+    #         RIGHT JOIN(
+    #              SELECT `value_date` FROM `stock_daily_data`
+    #              WHERE `value_date` BETWEEN str_to_date("%s", "%s") AND str_to_date("%s", "%s")
+    #              GROUP BY `value_date`) R
+    #         ON L.`existed_value_date` = R.`value_date`
+    #     )
+    #     ORDER BY `value_date`
+    #     """ % (stock_code, date_str1,"%Y-%m-%d", date_str2,"%Y-%m-%d", date_str1,"%Y-%m-%d", date_str2,"%Y-%m-%d")
+    #     #print sql
+    #     with closing(pymysql.connect('10.10.10.15', 'spider', 'jlspider', 'spider', charset='utf8')) as conn:
+    #         df0 = pd.read_sql(sql, conn)
+    #     #df0 = df0.drop(['existed_value_date', ], axis=1)
+    #
+    #     # 填充缺失数据
+    #     # 若给定时间内最早的数据为空，则寻找更早的数据填充
+    #     if df0.loc[0,:].isna().any() == True:
+    #         #print u"时间范围内没有股票%s的数据，用以下数据填充" %stock_code
+    #         sql = """
+    #         SELECT `stock_code`,`closing_price`,`value_date`
+    #         FROM `stock_daily_data`
+    #         WHERE `stock_code`="%s" AND `value_date` < str_to_date("%s", "%s")
+    #         ORDER BY `value_date` DESC
+    #         LIMIT 1
+    #         """ % (stock_code, date_str1, "%Y-%m-%d")
+    #         #print sql
+    #         with closing(pymysql.connect('10.10.10.15', 'spider', 'jlspider', 'spider', charset='utf8')) as conn:
+    #             dfx = pd.read_sql(sql, conn)
+    #         #print df0
+    #         if not dfx.empty:
+    #             df0.iloc[0, 0:2] = dfx.iloc[0, 0:2]
+    #         else:
+    #             print u"不存在股票%s的任何历史数据数据，请输入数据填充值"
+    #             value0 = raw_input(u"输入代替%s缺失值的收盘价:" % stock_code)
+    #             return pd.DataFrame([[stock_code, value0, date_str] for date_str in self.date_list],
+    #                                 columns=['stock_code', 'closing_price', 'value_date'])
+    #
+    #     df0 = df0.fillna(method='ffill')
+    #     self.date_list = df0['value_date'].tolist()
+    #     return df0
 
     def cal_stock(self, stock_code, date_str1, date_str2):
         df = self.get_stock_data(stock_code, date_str1, date_str2)
         if df is None:
+            print stock_code, u'股票数据为空'
             return None
-        df = df.sort_values(['value_date',])
+        df = df.sort_index()
+        backup_index = df.index
         df.index = range(df.shape[0])
         #print df
         for i in range(df.shape[0]):
             df.loc[i, 'cal_value'] = float(df.loc[i, 'closing_price'])/float(df.loc[0, 'closing_price'])
+
+        df.index = backup_index
         return df
 
-
     def get_stock_data(self, stock_code, date_str1, date_str2):
-        # 修正股票代码
-        #stock_code = stock_code.split('.')[0]
         if stock_code in stock_blacklist:
             print u"股票%s位于黑名单内" %stock_code
             return None
 
-        if re.search(r'[^\d]+', stock_code) and len(re.search(r'[^\d]+', stock_code).group()) == len(stock_code):
-            stock_code = stock_code.split('.')[0]
-        else:
-            stock_code = re.search(r'\d+', stock_code).group()
-        sql = """
-        SELECT `stock_code`,`closing_price`,`value_date` FROM
-        (
-            (SELECT `stock_code`,`closing_price`,`value_date` AS `existed_value_date`
-            FROM `stock_daily_data`
-            WHERE `stock_code`="%s" AND `value_date` BETWEEN str_to_date("%s", "%s") AND str_to_date("%s", "%s")) L
+        date_range = date_ser[(date_ser>=datetime.datetime.strptime(date_str1,'%Y-%m-%d')) & (date_ser<=datetime.datetime.strptime(date_str2,'%Y-%m-%d'))]
+        first_date = date_ser[date_ser>=datetime.datetime.strptime(date_str1,'%Y-%m-%d')].iloc[0]
 
-            RIGHT JOIN(
-                 SELECT `value_date` FROM `stock_daily_data`
-                 WHERE `value_date` BETWEEN str_to_date("%s", "%s") AND str_to_date("%s", "%s")
-                 GROUP BY `value_date`) R
-            ON L.`existed_value_date` = R.`value_date`
-        )
-        ORDER BY `value_date`
-        """ % (stock_code, date_str1,"%Y-%m-%d", date_str2,"%Y-%m-%d", date_str1,"%Y-%m-%d", date_str2,"%Y-%m-%d")
-        #print sql
+        # 获取股票类型
+        stock_code0 = copy.deepcopy(stock_code)
+        sql = 'SELECT `stock_code`, `stock_type` FROM `stock_belonging` WHERE `stock_code`=\'%s\'' % stock_code
         with closing(pymysql.connect('10.10.10.15', 'spider', 'jlspider', 'spider', charset='utf8')) as conn:
-            df0 = pd.read_sql(sql, conn)
-        #df0 = df0.drop(['existed_value_date', ], axis=1)
+            df = pd.read_sql(sql, conn)
+        stock_type = df['stock_type'].iat[0]
+        stock_code = stock_code + '.' + stock_type
 
-        # 填充缺失数据
-        # 若给定时间内最早的数据为空，则寻找更早的数据填充
-        if df0.loc[0,:].isna().any() == True:
-            #print u"时间范围内没有股票%s的数据，用以下数据填充" %stock_code
-            sql = """
-            SELECT `stock_code`,`closing_price`,`value_date`
-            FROM `stock_daily_data`
-            WHERE `stock_code`="%s" AND `value_date` < str_to_date("%s", "%s")
-            ORDER BY `value_date` DESC
-            LIMIT 1
-            """ % (stock_code, date_str1, "%Y-%m-%d")
-            #print sql
-            with closing(pymysql.connect('10.10.10.15', 'spider', 'jlspider', 'spider', charset='utf8')) as conn:
-                dfx = pd.read_sql(sql, conn)
-            #print df0
-            if not dfx.empty:
-                df0.iloc[0, 0:2] = dfx.iloc[0, 0:2]
-            else:
-                print u"不存在股票%s的任何历史数据数据，请输入数据填充值"
-                value0 = raw_input(u"输入代替%s缺失值的收盘价:" % stock_code)
-                return pd.DataFrame([[stock_code, value0, date_str] for date_str in self.date_list],
-                                    columns=['stock_code', 'closing_price', 'value_date'])
+        d = {
+            'candle_mode': '1',
+            'candle_period': '6',
+            'get_type': 'range',
+            'prod_code': stock_code,
+            'search_direction': '1',
+            'start_date':date_str1.replace('-',''),
+            'end_date':date_str2.replace('-',''),
+        }
+        json_data = api51.connect(user_key, d)[u'data'][u'candle']
 
-        df0 = df0.fillna(method='ffill')
-        self.date_list = df0['value_date'].tolist()
-        return df0
+        df = pd.DataFrame(json_data[stock_code], columns=json_data[u'fields'])
 
+        df = df.loc[:,['min_time','close_px']]
+        df['stock_code'] = stock_code0
 
-    # def get_stock_data(self, stock_code, date_str1, date_str2):
-    #     # 获取股票类型
-    #     sql = 'SELECT `stock_code`, `stock_type` FROM `stock_belonging` WHERE `stock_code`=\'%s\'' % stock_code
-    #     with closing(pymysql.connect('10.10.10.15', 'spider', 'jlspider', 'spider', charset='utf8')) as conn:
-    #         df = pd.read_sql(sql, conn)
-    #     stock_type = df['stock_type'].iat[0]
-    #
-    #     status = None
-    #     json_data = None
-    #     while (status == 'success') is False:
-    #         url = 'http://stock.liangyee.com/bus-api/stock/stockMarketData/GetDailyKBarComplexRights?userKey=%s&symbol=%s&startDate=%s&endDate=%s&type=%s' \
-    #               % (user_key,stock_code, date_str1, date_str2, stock_type)
-    #         json_data = json.loads(requests_manager.get_html(url))
-    #         status = json_data['message']
-    #         print "股票%s数据API返回状态为" %stock_code, status
-    #         if (status == 'success') is False:
-    #             print u"试试更改股票的type"
-    #             print url
-    #             stock_type = abs(int(stock_type)-1)
-    #
-    #
-    #
-    #     #print json_data
-    #     df = pd.DataFrame([s.split(',') for s in json_data['result']], columns=json_data['columns'].split(','))
-    #     #print df
-    #     #df = pd.DataFrame(df['result'].head(3).apply(lambda s:np.array(s.split(','))).tolist(), columns=df['columns'][0].split(','))
-    #     df = df.rename({u'交易日':u'value_date', u'开盘价':u'opening_price', u'收盘价':u'closing_price', u'最高价':u'high_price',
-    #                     u'最低价':u'low_price', u'成交量':u'trading_volume'}, axis=1)
-    #     return df
+        df['min_time'] = df['min_time'].apply(lambda date:datetime.datetime.strptime(str(date), '%Y%m%d').strftime('%Y-%m-%d'))
+
+        df = df.rename({'min_time':'value_date','close_px':'closing_price'}, axis=1)
+        df.index = df['value_date']
+
+        # 补全股票价格
+        if df['value_date'].iloc[0] != first_date:
+            d = {
+                'candle_mode': '1',
+                'candle_period': '6',
+                'get_type': 'range',
+                'prod_code': stock_code,
+                'search_direction': '1',
+                'end_date': date_str1.replace('-', ''),
+            }
+            json_data = api51.connect(user_key, d)
+            df0 = pd.DataFrame(json_data['data']['candle'][stock_code], columns=json_data['data']['candle']['fields'])
+            df.loc[first_date.strftime('%Y-%m-%d'), 'closing_price'] = df0['close_px'].iloc[-1]
+            df.loc[first_date.strftime('%Y-%m-%d'), 'value_date'] = first_date.strftime('%Y-%m-%d')
+            df.loc[first_date.strftime('%Y-%m-%d'), 'stock_code'] = stock_code.split('.')[0]
+            df = df.sort_index()
+        df = df.drop(['value_date',],axis=1)
+        # print df
+        df = df.reindex([date.strftime('%Y-%m-%d') for date in date_range]).fillna(method='ffill')
+        # print df
+        return df
 
     def get_fund_holdings_data(self, fund_code, cut_off_date):
 
@@ -180,22 +228,29 @@ class cal_fitting_net_value(object):
             #raise Exception(u'%s has no fund_holdings data with cut_off_date: %s' % (fund_code, cut_off_date))
 
         ser = None
+        date_set = set()
         for i in xrange(df.shape[0]):
             stock_code = df.loc[i, 'stock_code']
             value_ratio = df.loc[i, 'net_value_ratio']
+            #print 'value_ratio', value_ratio
             print u'计算股票%s' % stock_code
             res = self.cal_stock(stock_code, date_str1, date_str2)
+            res = res.fillna(method = 'ffill')
             if res is None:
                 return None
             # print res
-            res.index = res['value_date']
-            # print res
-            # print res.loc['2017-01-09',:]
+            # print 'A'
+            # print ser
+            #print res
             if ser is None:
-                ser = res['cal_value'] * value_ratio  # 个股每日的折算净值
+                ser = res['cal_value'] * value_ratio  # 根据基金持仓比例计算个股每日的折算净值
             else:
                 ser = ser + res['cal_value'] * value_ratio
                 # ser = ser.fillna(method='ffill')
+            #print 'B'
+            #print ser
+
+        # print ser
         return ser
         #ser.to_csv('%s(cut_off_%s)(%s)_(%s).csv' % (fund_code, cut_off_date, date_str1, date_str2))
 
@@ -214,11 +269,14 @@ class cal_fitting_net_value(object):
         yield_rate = 1 # 初始收益率为1
         for l in date_l:
             ser0 = self.cal_net_value(fund_code,l[0],l[1],l[2]) # 计算一段时间内拟合净值
+            #print ser0
             if ser0 is None:
+                print fund_code, u'没有此截止时间的拟合数据', l[0]
                 continue
             ser= ser.append(ser0 * yield_rate) # 将新的拟合净值，乘以之前总净值数列的收益率后，合并入总净值数列
             yield_rate = ser.iloc[-1] / ser.iloc[0]  # 计算此时总净值数列的收益率
         ser.name = 'fitting_net_value'
+        # print ser
         return ser
 
 if __name__ == '__main__':
@@ -226,10 +284,10 @@ if __name__ == '__main__':
     code_list =['001542','000457']
     # 截止日期， 股票取值起始日期， 股票取值截止日期
     date_l = [
-        ['2016-9-30', '2016-10-20', '2017-04-19'],
-        ['2017-3-31', '2017-04-20', '2017-08-20'],
-        ['2017-6-30', '2017-08-21', '2017-10-20'],
-        ['2017-9-30', '2017-10-21', '2020-01-01']
+        ['2016-09-30', '2016-10-20', '2017-04-19'],
+        ['2017-03-31', '2017-04-20', '2017-08-20'],
+        ['2017-06-30', '2017-08-21', '2017-10-20'],
+        ['2017-09-30', '2017-10-21', '2020-01-01']
     ]
     for code in code_list:
         ser = cal_fitting_net_value.combine_net_value(code, date_l)

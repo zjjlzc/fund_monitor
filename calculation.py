@@ -29,6 +29,10 @@ class calculation(object):
         pass
 
     def earnings_cal(self, fund_code, df, **kwarg):
+        if df.empty:
+            print fund_code, u'数据为空'
+            return None
+
         if kwarg:
             date_col = kwarg['date_col']
             value_col = kwarg['value_col']
@@ -87,11 +91,15 @@ class calculation(object):
         annual_yield = (df[value_col].iloc[-1] / df[value_col].iloc[0] - 1) * 365.0 / (df[date_col].iloc[-1] - df[date_col].iloc[0]).days
         product_yield = df[value_col].iloc[-1] / df[value_col].iloc[0] - 1  # 最后一个除以第一个，减1
         retracement = min(df[target_col].dropna())
-        annual_earnings_retracement_ratio = annual_yield / (-retracement)
-        earnings_retracement_ratio = product_yield / (-retracement)
+        if retracement:
+            annual_earnings_retracement_ratio = annual_yield / (-retracement)
+            earnings_retracement_ratio = product_yield / (-retracement)
+        else:
+            annual_earnings_retracement_ratio = None
+            earnings_retracement_ratio = None
 
         return pd.Series([fund_code, product_yield, retracement, earnings_retracement_ratio, annual_yield, annual_earnings_retracement_ratio],
-                         index=[u'基金代号', u'收益率', u'回撤', u'收益回撤比', u'年化收益率',u'年化收益回撤比'])
+                         index=[u'基金代号', u'收益率', u'最大回撤', u'收益回撤比', u'年化收益率',u'年化收益回撤比'])
 
 if __name__ == '__main__':
     calculation = calculation()

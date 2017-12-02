@@ -52,14 +52,41 @@ class Spider(scrapy.Spider):
             (SELECT `fund_code` a, max(`value_date`) b FROM `eastmoney_daily_data` GROUP BY `fund_code`) R
         ON L.`fund_code` = R.a AND L.`value_date` = R.b
     """
+
     with closing(pymysql.connect('10.10.10.15', 'spider', 'jlspider', 'spider', charset='utf8')) as conn:
         newest_date_df = pd.read_sql(sql, conn)
     #print newest_date_df
 
+    def __init__(self, method='all'):
+        self.method = method
+        print 'self.method=', self.method
+
     def start_requests(self):
         self.urls = ["http://fund.eastmoney.com/fund.html#os_0;isall_0;ft_;pt_1",]
+
         for url in self.urls:
-            yield scrapy.Request(url=url, callback=self.parse)
+            if self.method == 'all':
+                yield scrapy.Request(url=url, callback=self.parse)
+            elif self.method == 'daily':
+                yield scrapy.Request(url=url, callback=self.parse00)
+
+    def parse00(self, response):
+        try:
+            with open('important_fund.txt','r') as f:
+                l = f.read().split('\n')
+
+            for fund_code in l:
+                if not fund_code:
+                    continue
+
+                item = fund_monitor.items.FundMonitorItem()
+                item['fund_code'] = fund_code
+                item['url'] = 'http://fund.eastmoney.com/%s.html' %fund_code
+
+                yield scrapy.Request(item['url'], meta={'item': item}, callback=self.parse1, dont_filter=True)
+        except:
+            log_obj.error("%s中无法解析\n原因：%s" %(self.name, traceback.format_exc()))
+
 
     def parse(self, response):
         driver = driver_manager.initialization()

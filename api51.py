@@ -41,17 +41,23 @@ class api51(object):
 
         request = urllib2.Request(url)
         request.add_header('Authorization', 'APPCODE ' + appcode)
-        response = urllib2.urlopen(request)
+
         print url
-        print "api51 respone:", response.code
+        try_times = 1 # 重试次数
+        while try_times < 6:
+            try:
+                response = urllib2.urlopen(request)
+                print "api51 respone:", response.code
 
-        content = response.read()
-        if response.code != 200:
-            raise Exception(u'没有接受到api51的数据，返回信息为\n%s' %content)
+                content = response.read()
 
-        if (content):
-            data = pd.json.loads(content)
-            return data
+                if (content):
+                    data = pd.json.loads(content)
+                    return data
+            except:
+                print u'没有接受到api51的数据，即将进行第%s次重试' %try_times
+            finally:
+                try_times = try_times + 1
 
 
 if __name__ == '__main__':

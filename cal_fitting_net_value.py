@@ -143,6 +143,7 @@ class cal_fitting_net_value(object):
             print u"股票%s位于黑名单内" %stock_code
             return None
 
+        print u"正在获取%s位于时间%s | %s内的数据" %(stock_code, date_str1, date_str2)
         date_range = date_ser[(date_ser>=datetime.datetime.strptime(date_str1,'%Y-%m-%d')) & (date_ser<=datetime.datetime.strptime(date_str2,'%Y-%m-%d'))]
         first_date = date_ser[date_ser>=datetime.datetime.strptime(date_str1,'%Y-%m-%d')].iloc[0]
 
@@ -176,7 +177,11 @@ class cal_fitting_net_value(object):
         df.index = df['value_date']
 
         # 补全股票价格
-        if df['value_date'].iloc[0] != first_date:
+        if df.empty or df['value_date'].iloc[0] != first_date.strftime('%Y-%m-%d'):
+            if df.empty:
+                print u'给定时间范围内，交易日的第一天为%s，没有股票数据' %first_date.strftime('%Y-%m-%d')
+            else:
+                print u'给定时间范围内，交易日的第一天为%s，获得的股票数据第一天为%s' %(first_date.strftime('%Y-%m-%d'), df['value_date'].iloc[0])
             d = {
                 'candle_mode': '1',
                 'candle_period': '6',
@@ -279,17 +284,53 @@ class cal_fitting_net_value(object):
         # print ser
         return ser
 
+    def single_fitting_net_value(self, stock_list, date_str1, date_str2):
+        """
+        stock_list = {
+        '600519': 0.0857,
+        '000568': 0.0819,
+        '601318': 0.0810,
+        '000858': 0.0782,
+        '601398': 0.0780,
+        '601601': 0.0778,
+        '600036': 0.0734,
+        '601288': 0.0720,
+        '601688': 0.0421,
+        '600809': 0.0356
+        }
+        返回一个拟合净值
+
+        """
+
+        ser = None
+        for stock_code in stock_list:
+            value_ratio = stock_list[stock_code]
+            #print 'value_ratio', value_ratio
+            print u'计算股票%s' % stock_code
+            res = self.cal_stock(stock_code, date_str1, date_str2)
+            res = res.fillna(method = 'ffill')
+            if res is None:
+                return None
+
+            if ser is None:
+                ser = res['cal_value'] * value_ratio  # 根据基金持仓比例计算个股每日的折算净值
+            else:
+                ser = ser + res['cal_value'] * value_ratio
+        return ser
+
+
 if __name__ == '__main__':
     cal_fitting_net_value = cal_fitting_net_value()
-    code_list =['001542','000457']
-    # 截止日期， 股票取值起始日期， 股票取值截止日期
-    date_l = [
-        ['2016-09-30', '2016-10-20', '2017-04-19'],
-        ['2017-03-31', '2017-04-20', '2017-08-20'],
-        ['2017-06-30', '2017-08-21', '2017-10-20'],
-        ['2017-09-30', '2017-10-21', '2020-01-01']
-    ]
-    for code in code_list:
-        ser = cal_fitting_net_value.combine_net_value(code, date_l)
-        ser.to_csv('%s.csv' % (code))
-    #print cal_fitting_net_value.cal_stock('600519')
+    # code_list =['001542','000457']
+    # # 截止日期， 股票取值起始日期， 股票取值截止日期
+    # date_l = [
+    #     ['2016-09-30', '2016-10-20', '2017-04-19'],
+    #     ['2017-03-31', '2017-04-20', '2017-08-20'],
+    #     ['2017-06-30', '2017-08-21', '2017-10-20'],
+    #     ['2017-09-30', '2017-10-21', '2020-01-01']
+    # ]
+    # for code in code_list:
+    #     ser = cal_fitting_net_value.combine_net_value(code, date_l)
+    #     ser.to_csv('%s.csv' % (code))
+    # #print cal_fitting_net_value.cal_stock('600519')
+    print cal_fitting_net_value.single_fitting_net_value('2017-10-21','2018-01-01')

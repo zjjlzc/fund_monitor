@@ -171,6 +171,9 @@ class fund_holdings_display(object):
                 os.remove('final_output.csv')
 
             for fund_code in code_list:
+                if not fund_code:
+                    print u'空白行，略过'
+                    continue
                 print fund_code
                 df = fund_holdings_display.get_data(fund_code)
                 date_d = fund_holdings_display.data_classify(df)

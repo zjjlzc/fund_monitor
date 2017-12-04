@@ -232,8 +232,6 @@ class compare_net_value(object):
                                                    u'折算净值收益回撤比'
                                                 ]))
 
-
-
                     output = output.append(res, ignore_index=True)
                     output_colums = res.index.tolist() if len(res.index.tolist()) >= output.shape[1] else output.columns.tolist()
                     output = output.reindex(output_colums, axis=1)
@@ -326,7 +324,7 @@ class compare_net_value(object):
             writer.save()
 
     def stock_fitting(self):
-        df = pd.read_json('stock_fitting_data.json', dtype=np.str)
+        # df = pd.read_json('stock_fitting_data.json', dtype=np.str)
         with open('stock_fitting_data.json', 'r') as f:
             json_data = json.load(f)
 
@@ -347,4 +345,5 @@ class compare_net_value(object):
 
 if __name__ == '__main__':
     compare_net_value = compare_net_value()
-    compare_net_value.data_display()
+    # compare_net_value.data_display()
+    compare_net_value.stock_fitting()

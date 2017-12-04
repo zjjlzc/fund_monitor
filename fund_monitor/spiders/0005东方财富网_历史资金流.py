@@ -47,23 +47,62 @@ class Spider(scrapy.Spider):
     def start_requests(self):
 
         sql = """
-        SELECT * FROM `capital_flow_info`
+        SELECT `plate_name`, `url` FROM `capital_flow_info`
         """
 
         with closing(pymysql.connect('10.10.10.15', 'spider', 'jlspider', 'spider', charset='utf8')) as conn:
-            url_list = pd.read_sql(sql, conn)
+            url_df = pd.read_sql(sql, conn)
 
-        self.urls = url_list['url'].tolist()
-
-        for url in self.urls:
-            yield scrapy.Request(url=url, callback=self.parse)
+        for t in url_df.iterrows():
+            ser = t[1]
+            item = fund_monitor.items.FundMonitorItem()
+            item['plate_name'] = ser['plate_name']
+            yield scrapy.Request(url='http://data.eastmoney.com' + ser['url'], meta={'item': item}, callback=self.parse)
 
     def parse(self, response):
+        item = response.meta['item']
         try:
-            requests_manager =
+            print u"正在爬取%s板块的历史资金流数据" %item['plate_name']
+            bs_obj = bs4.BeautifulSoup(response.text, 'html.parser')
+            e_table = bs_obj.find('table', id='tb_lishi')
+
+            plate_name = item['plate_name']
+
+            df = pd.read_html(e_table.prettify(encoding='utf8'), encoding='utf8')[0]
+            df.columns = [
+                u'日期',
+                u'主力净流入净额',
+                u'主力净流入净占比',
+                u'超大单净流入净额',
+                u'超大单净流入净占比',
+                u'大单净流入净额',
+                u'大单净流入净占比',
+                u'中单净流入净额',
+                u'中单净流入净占比',
+                u'小单净流入净额',
+                u'小单净流入净占比'
+            ]
+            df = df.rename({
+                u'日期':'value_date',
+                u'主力净流入净额':'main_flow_amount',
+                u'主力净流入净占比':'main_flow_ratio',
+                u'超大单净流入净额':'super_flow_amount',
+                u'超大单净流入净占比':'super_flow_ratio',
+                u'大单净流入净额':'big_flow_amount',
+                u'大单净流入净占比':'big_flow_ratio',
+                u'中单净流入净额':'median_flow_amount',
+                u'中单净流入净占比':'median_flow_ratio',
+                u'小单净流入净额':'small_flow_amount',
+                u'小单净流入净占比':'small_flow_ratio'
+            }, axis=1)
+            df['plate_name'] = plate_name
+            df['crawler_key'] = df['plate_name'] + '/' + df['value_date']
+
+            if not df.empty:
+                mysql_connecter.insert_df_data(df, 'capital_flow_data', method='UPDATE')
+
         except:
             log_obj.error("%s中无法解析\n原因：%s" %(self.name, traceback.format_exc()))
-
 
 
 if __name__ == '__main__':

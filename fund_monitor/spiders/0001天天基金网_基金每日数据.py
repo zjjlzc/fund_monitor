@@ -137,6 +137,10 @@ class Spider(scrapy.Spider):
             data_type = e_dl.find('span', class_='sp01').get_text(strip=True)
             data_date = e_dl.find('span', id='gz_gztime').get_text(strip=True)
             data_date = datetime.datetime.strptime(re.sub(r'\(|\)','',data_date),'%y-%m-%d %H:%M')
+            # 周六，周日按周五算
+            data_date = data_date - datetime.timedelta(days=1) if data_date.isoweekday() == 6 else data_date
+            data_date = data_date - datetime.timedelta(days=2) if data_date.isoweekday() == 7 else data_date
+
             df = pd.DataFrame(data + [data_type, data_date], index=[u'净值', u'涨跌值', u'涨跌幅', u'数据类型', u'数据日期']).T
             df = df.drop([u'涨跌值', u'数据类型'], axis=1)
             df = df.rename({u'净值':u'estimate_net_value',u'涨跌幅':u'estimate_daily_growth_rate', u'数据日期':u'value_date'}, axis=1)
@@ -145,10 +149,14 @@ class Spider(scrapy.Spider):
             df[u'crawler_key'] = df[u'fund_code'] + '/' + df[u'value_date']
             df.index = df[u'crawler_key']
             print u"网页日期:",df[u'value_date'].iat[0],u'本地日期：', lastest_date
-            if datetime.datetime.strptime(df[u'value_date'].iat[0],'%Y-%m-%d').date() <= lastest_date.date():
-                mysql_connecter.update_df_data(df, u'eastmoney_daily_data', u'crawler_key')
+            # if datetime.datetime.strptime(df[u'value_date'].iat[0],'%Y-%m-%d').date() <= lastest_date.date():
+            #     mysql_connecter.update_df_data(df, u'eastmoney_daily_data', u'crawler_key')
+            # else:
+            #     mysql_connecter.insert_df_data(df, u'eastmoney_daily_data', method='UPDATE')
+            if not df.empty:
+                mysql_connecter.insert_df_data(df, 'eastmoney_daily_data', method='UPDATE')
             else:
-                mysql_connecter.insert_df_data(df, u'eastmoney_daily_data')
+                print u"无最新数据"
 
         except:
             log_obj.error("%s（ %s ）中无法解析\n%s" % (self.name, response.url, traceback.format_exc()))

@@ -447,13 +447,16 @@ class net_value_cal_display(object):
         with open('important_fund.txt', 'r') as f:
             code_list = f.read().split('\n')
 
-        if os.path.exists('net_value_cal_display.csv'):
-            os.remove('net_value_cal_display.csv')
+        output_file = u'%s净值日报.csv' %datetime.datetime.now().strftime(u'%Y-%m-%d')
+        if os.path.exists(output_file):
+            os.remove(output_file)
 
         df = pd.DataFrame(code_list, columns=['fund_code',])
         df.index = df['fund_code']
 
         date_today = date_ser.iloc[-1]
+
+
 
         start_time = time.time()
         for fund_code in df.index:
@@ -626,7 +629,7 @@ class net_value_cal_display(object):
                 # df.loc[fund_code, u'前月收益回撤比'] = ser_1m_before[u'收益回撤比'] if ser_1m_before is not None and not ser_1m_before.empty else None
 
                 df.index.name = u'基金代号'
-                df.rename({'fund_code':u'基金代号'}, axis=1).to_csv('net_value_cal_display.csv', index=None, encoding='ascii')
+                df.rename({'fund_code':u'基金代号'}, axis=1).to_csv(output_file, index=None, encoding='ascii')
                 print u"耗时:", time.time() - start_time
             except:
                 log_obj.error(u'%s计算时出错' %fund_code)

@@ -323,14 +323,17 @@ class compare_net_value(object):
                 df.to_excel(writer, title, index=None)
             writer.save()
 
-    def stock_fitting(self):
+    def stock_fitting(self, date1='2017-10-21', date2='2018-01-01'):
         # df = pd.read_json('stock_fitting_data.json', dtype=np.str)
         with open('stock_fitting_data.json', 'r') as f:
             json_data = json.load(f)
 
+        if os.path.exists(u'stock_fitting_计算过程.csv'):
+            os.remove(u'stock_fitting_计算过程.csv')
+
         df_total = pd.DataFrame([])
         for code in json_data:
-            ser = cal_fitting_net_value.single_fitting_net_value(json_data[code],'2017-10-21','2018-01-01')
+            ser = cal_fitting_net_value.single_fitting_net_value(json_data[code],date1,date2)
             ser = ser.dropna()
             ser.name = code
             df = pd.DataFrame(ser)
@@ -339,8 +342,6 @@ class compare_net_value(object):
             df = df.reset_index()
             df_total = df_total.append(calculation.earnings_cal(code, df, date_col='value_date', value_col=code), ignore_index=True)
         print df_total
-
-
 
 
 if __name__ == '__main__':

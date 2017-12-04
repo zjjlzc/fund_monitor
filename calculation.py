@@ -30,7 +30,7 @@ class calculation(object):
 
     def earnings_cal(self, fund_code, df, **kwarg):
         if df.empty:
-            print fund_code, u'数据为空'
+            print 'earnings_cal=>', fund_code, u'数据为空'
             return None
 
         if kwarg:
@@ -41,9 +41,12 @@ class calculation(object):
 
         date1 = kwarg['date1'] if 'date1' in kwarg else min(pd.to_datetime(df.loc[:, date_col]))
         date2 = kwarg['date2'] if 'date2' in kwarg else max(pd.to_datetime(df.loc[:, date_col]))
+        if date1 == date2:
+            print u'earnings_cal=>输入日期间隔为0'
+            return None
 
         print u"正在准备计算%s的从%s到%s的数据" % (fund_code, date1, date2)
-        print date_col, value_col, date1, date2
+        #print date_col, value_col, date1, date2
         target_col = u'retracement'
 
         df.to_csv('test.csv')
@@ -69,21 +72,7 @@ class calculation(object):
 
         df = df.reset_index(drop=True)
         df[value_col] = df[value_col].astype(np.float) # 更改目标列的数据格式
-        # df_backup = df.copy()
-        #
-        # # 方法1
-        # # df = df_backup.copy()
-        # # for i in range(1, df.shape[0]):
-        # #     value0 = df.loc[i, value_col]
-        # #     date0 = df.loc[i, date_col]
-        # #     df.loc[i, 'max'] = func_max(date0)
-        # #     if value0 < func_max(date0):
-        # #         df.loc[i, target_col] = (value0 / func_max(date0)) - 1
-        # #     else:
-        # #         df.loc[i, target_col] = 0
-        #
-        # # 方法2
-        # df = df_backup.copy()
+
         df['max'] = df[value_col].expanding(min_periods=1).max()
         df[target_col] = (df[value_col] / df['max'] - 1).copy()
         #print df

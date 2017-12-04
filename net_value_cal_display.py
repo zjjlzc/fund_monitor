@@ -28,6 +28,8 @@ import json
 from xlutils.copy import copy
 import api51
 api51 = api51.api51()
+import calculation
+calculation = calculation.calculation()
 
 sys.path.append(sys.prefix + "\\Lib\\MyWheels")
 reload(sys)
@@ -71,13 +73,6 @@ class net_value_cal_display(object):
             df = pd.read_sql(sql, conn)
         # print df.head(5)
         return df
-
-    def mul_cal(self, summary_listing, row, fund_code, date1, date2, earnings_type, needed_data, co_col):
-        ser = self.simple_cal(fund_code, date1, date2, earnings_type)
-        if ser is not None:
-            for i in range(len(needed_data)):
-                summary_listing.loc[row, needed_data[i]] = ser[co_col[i]]
-        return summary_listing
 
     def simple_cal(self, fund_code, date1, date2, earnings_type):
         print u"正在准备计算%s的从%s到%s的%s数据" %(fund_code, date1, date2, earnings_type)
@@ -461,25 +456,25 @@ class net_value_cal_display(object):
         date_today = date_ser.iloc[-1]
 
         start_time = time.time()
-        for code in df.index:
+        for fund_code in df.index:
             try:
-                if not code:
-                    df.loc[code,:] = None
+                if not fund_code:
+                    df.loc[fund_code,:] = None
                     print u'空白行，略过'
                     continue
 
                 # 基金类型,基金名称，基金分类
                 sql = """
                 SELECT `fund_code`, `fund_name`, `fund_type`, `1st_class`, `2nd_class`, `3rd_class` FROM `fund_info` WHERE `fund_code` = '%s'
-                """ % code
+                """ % fund_code
                 with closing(pymysql.connect('10.10.10.15', 'spider', 'jlspider', 'spider', charset='utf8')) as conn:
                     df0 = pd.read_sql(sql, conn)
 
-                df.loc[code, u'基金名称'] = df0['fund_name'].iloc[0]
-                df.loc[code, u'基金类型'] = df0['fund_type'].iloc[0]
-                df.loc[code, u'一级分类'] = df0['1st_class'].iloc[0]
-                df.loc[code, u'二级分类'] = df0['2nd_class'].iloc[0]
-                df.loc[code, u'三级分类'] = df0['3rd_class'].iloc[0]
+                df.loc[fund_code, u'基金名称'] = df0['fund_name'].iloc[0]
+                df.loc[fund_code, u'基金类型'] = df0['fund_type'].iloc[0]
+                df.loc[fund_code, u'一级分类'] = df0['1st_class'].iloc[0]
+                df.loc[fund_code, u'二级分类'] = df0['2nd_class'].iloc[0]
+                df.loc[fund_code, u'三级分类'] = df0['3rd_class'].iloc[0]
 
                 # 今天与上个月底的股票仓位预测
                 date_1 = datetime.datetime(year=date_today.year, month=(date_today - relativedelta(months=1)).month,
@@ -490,12 +485,12 @@ class net_value_cal_display(object):
                     WHERE `value_date` <= "%s" AND `fund_code` = "%s"
                     ORDER BY `value_date` DESC
                     LIMIT 1
-                    """ % (date0.strftime('%Y-%m-%d'), code)
+                    """ % (date0.strftime('%Y-%m-%d'), fund_code)
                     with closing(pymysql.connect('10.10.10.15', 'spider', 'jlspider', 'spider', charset='utf8')) as conn:
                         df0 = pd.read_sql(sql, conn)
 
                     datex = df0.loc[0, 'value_date'].strftime(u'%m月%d日')
-                    df.loc[code, datex + u"股票仓位"] = df0.loc[0, 'fund_shares_positions'] if not df0.empty else None
+                    df.loc[fund_code, datex + u"股票仓位"] = df0.loc[0, 'fund_shares_positions'] if not df0.empty else None
 
                 # 近期净值和收益率
                 date_str = date_today.strftime('%Y-%m-%d')
@@ -504,84 +499,137 @@ class net_value_cal_display(object):
                 WHERE `value_date` <= "%s" AND `fund_code` = "%s"
                 ORDER BY `value_date` DESC
                 LIMIT 3
-                """ %(date_str,code)
+                """ %(date_str,fund_code)
                 with closing(pymysql.connect('10.10.10.15', 'spider', 'jlspider', 'spider', charset='utf8')) as conn:
                     df0 = pd.read_sql(sql, conn)
 
                 for i in range(1):
                     datex = df0.loc[i, 'value_date'].strftime(u'%m月%d日')
-                    df.loc[code, datex + u"预估净值"] = df0.loc[i, 'estimate_net_value'] if not df0.empty else None
-                    df.loc[code, datex + u"结算净值"] = df0.loc[i, 'net_asset_value'] if not df0.empty else None
+                    df.loc[fund_code, datex + u"预估净值"] = df0.loc[i, 'estimate_net_value'] if not df0.empty else None
+                    df.loc[fund_code, datex + u"结算净值"] = df0.loc[i, 'net_asset_value'] if not df0.empty else None
 
                 for i in range(1,3):
                     datex = df0.loc[i, 'value_date'].strftime(u'%m月%d日')
-                    df.loc[code, datex + u"结算净值"] = df0.loc[i, 'net_asset_value'] if not df0.empty else None
+                    df.loc[fund_code, datex + u"结算净值"] = df0.loc[i, 'net_asset_value'] if not df0.empty else None
 
                 for i in range(1):
                     datex = df0.loc[i, 'value_date'].strftime(u'%m月%d日')
-                    #df.loc[code, datex + u"预估净值收益率"] = df0.loc[i, 'estimate_daily_growth_rate'] if not df0.empty else None
-                    df.loc[code, datex + u"结算净值收益率"] = df0.loc[i, 'daily_growth_rate'] if not df0.empty else None
+                    #df.loc[fund_code, datex + u"预估净值收益率"] = df0.loc[i, 'estimate_daily_growth_rate'] if not df0.empty else None
+                    df.loc[fund_code, datex + u"结算净值收益率"] = df0.loc[i, 'daily_growth_rate'] if not df0.empty else None
                 # print df
 
-                # 5天
-                date1 = date_ser.iloc[-5]
-                date2 = date_today
-                #print u'5天', date1, date2
-                ser_5d = self.simple_cal(code, date1, date2, u'收益')
-                # 本周
-                date1 = date_today - datetime.timedelta(date_today.weekday())
-                date2 = date_today
-                #print u'本周', date1, date2
-                ser_1w = self.simple_cal(code, date1, date2, u'收益')
-                # 本月
-                date1 = datetime.datetime(year=date_today.year, month=date_today.month, day=1)
-                date2 = date_today
-                #print u'本月', date1, date2
-                ser_1m = self.simple_cal(code, date1, date2, u'收益')
-                # 上月
-                date1 = datetime.datetime(year=date_today.year, month=date_today.month-1, day=1)
-                date2 = datetime.datetime(year=date_today.year, month=date_today.month-1, day=calendar.monthrange(date1.year,month=date1.month)[1])
-                #print u'上月', date1, date2
-                ser_1m_before = self.simple_cal(code, date1, date2, u'收益')
-                # 当季
-                date1 = datetime.datetime(year=date_today.year, month= int((date_today.month - 1) / 3) * 3 + 1, day=1)
-                date2 = date_today
-                #print u'本季', date1, date2
-                ser_1s = self.simple_cal(code, date1, date2, u'收益')
+                d = {
+                    u'5天':{
+                        'date1':date_ser.iloc[-5],
+                        'date2':date_today
+                    },
+                    u'本周':{
+                        'date1':date_today - datetime.timedelta(date_today.weekday()),
+                        'date2':date_today
+                    },
+                    u'本月':{
+                        'date1':datetime.datetime(year=date_today.year, month=date_today.month, day=1),
+                        'date2':date_today
+                    },
+                    u'前月':{
+                        'date1':datetime.datetime(year=date_today.year, month=date_today.month-1, day=1),
+                        'date2':datetime.datetime(year=date_today.year, month=date_today.month-1, day=calendar.monthrange(date_today.year,month=date_today.month-1)[1])
+                    },
+                    u'本季':{
+                        'date1':datetime.datetime(year=date_today.year, month= int((date_today.month - 1) / 3) * 3 + 1, day=1),
+                        'date2':date_today
+                    }
 
-                df.loc[code, u'5天收益率'] = ser_5d[u'收益'] if ser_5d is not None and not ser_5d.empty else None
-                df.loc[code, u'本周收益率'] = ser_1w[u'收益'] if ser_1w is not None and not ser_1w.empty else None
-                df.loc[code, u'本月收益率'] = ser_1m[u'收益'] if ser_1m is not None and not ser_1m.empty else None
-                df.loc[code, u'前月收益率'] = ser_1m_before[u'收益'] if ser_1m_before is not None and not ser_1m_before.empty else None
-                df.loc[code, u'本季收益率'] = ser_1s[u'收益'] if ser_1s is not None and not ser_1s.empty else None
+                }
+                # for key in d:
+                #     print key
+                #     print d[key]['date1']
+                #     print d[key]['date2']
 
-                df.loc[code, u'5天回撤'] = ser_5d[u'回撤'] if ser_5d is not None and not ser_5d.empty else None
-                df.loc[code, u'本月回撤'] = ser_1m[u'回撤'] if ser_1m is not None and not ser_1m.empty else None
-                df.loc[code, u'前月回撤'] = ser_1m_before[u'回撤'] if ser_1m_before is not None and not ser_1m_before.empty else None
-                df.loc[code, u'本季回撤'] = ser_1s[u'回撤'] if ser_1s is not None and not ser_1s.empty else None
+                date1 = min([d[key]['date1'] for key in d])
+                date2 = max([d[key]['date2'] for key in d])
+                sql = """
+                SELECT `crawler_key`, `fund_code`, `value_date`,`accumulative_net_value` FROM `eastmoney_daily_data`
+                WHERE `fund_code` = %s AND (`value_date` BETWEEN "%s" AND "%s")""" %(fund_code,date1,date2)
+                with closing(pymysql.connect('10.10.10.15', 'spider', 'jlspider', 'spider', charset='utf8')) as conn:
+                    df0 = pd.read_sql(sql, conn)
+
+                for key in d:
+                    d[key]['res'] = calculation.earnings_cal(fund_code, df0, date1=d[key]['date1'], date2=d[key]['date2'],
+                                                             date_col='value_date', value_col='accumulative_net_value')
+
+                for s in [u'5天', u'本周', u'本月', u'前月', u'本季']:
+                    data_type = u'收益率'
+                    df.loc[fund_code, s + data_type] = d[s]['res'][data_type] if d[s]['res'] is not None and not d[s]['res'].empty else None
+
+                for s in [u'5天', u'本月', u'前月', u'本季']:
+                    data_type = u'最大回撤'
+                    df.loc[fund_code, s + data_type] = d[s]['res'][data_type] if d[s]['res'] is not None and not d[s]['res'].empty else None
+
+                for s in [u'本月', u'前月']:
+                    data_type = u'收益回撤比'
+                    df.loc[fund_code, s + data_type] = d[s]['res'][data_type] if d[s]['res'] is not None and not d[s]['res'].empty else None
+
+
+                # # 5天
+                # date1 = date_ser.iloc[-5]
+                # date2 = date_today
+                # #print u'5天', date1, date2
+                # ser_5d = calculation.earnings_cal(fund_code, date1, date2, u'收益')
+                # # 本周
+                # date1 = date_today - datetime.timedelta(date_today.weekday())
+                # date2 = date_today
+                # #print u'本周', date1, date2
+                # ser_1w = self.simple_cal(fund_code, date1, date2, u'收益')
+                # # 本月
+                # date1 = datetime.datetime(year=date_today.year, month=date_today.month, day=1)
+                # date2 = date_today
+                # #print u'本月', date1, date2
+                # ser_1m = self.simple_cal(fund_code, date1, date2, u'收益')
+                # # 上月
+                # date1 = datetime.datetime(year=date_today.year, month=date_today.month-1, day=1)
+                # date2 = datetime.datetime(year=date_today.year, month=date_today.month-1, day=calendar.monthrange(date1.year,month=date1.month)[1])
+                # #print u'上月', date1, date2
+                # ser_1m_before = self.simple_cal(fund_code, date1, date2, u'收益')
+                # # 当季
+                # date1 = datetime.datetime(year=date_today.year, month= int((date_today.month - 1) / 3) * 3 + 1, day=1)
+                # date2 = date_today
+                # #print u'本季', date1, date2
+                # ser_1s = self.simple_cal(fund_code, date1, date2, u'收益')
+
+                # df.loc[fund_code, u'5天收益率'] = ser_5d[u'收益'] if ser_5d is not None and not ser_5d.empty else None
+                # df.loc[fund_code, u'本周收益率'] = ser_1w[u'收益'] if ser_1w is not None and not ser_1w.empty else None
+                # df.loc[fund_code, u'本月收益率'] = ser_1m[u'收益'] if ser_1m is not None and not ser_1m.empty else None
+                # df.loc[fund_code, u'前月收益率'] = ser_1m_before[u'收益'] if ser_1m_before is not None and not ser_1m_before.empty else None
+                # df.loc[fund_code, u'本季收益率'] = ser_1s[u'收益'] if ser_1s is not None and not ser_1s.empty else None
+                #
+                # df.loc[fund_code, u'5天回撤'] = ser_5d[u'回撤'] if ser_5d is not None and not ser_5d.empty else None
+                # df.loc[fund_code, u'本月回撤'] = ser_1m[u'回撤'] if ser_1m is not None and not ser_1m.empty else None
+                # df.loc[fund_code, u'前月回撤'] = ser_1m_before[u'回撤'] if ser_1m_before is not None and not ser_1m_before.empty else None
+                # df.loc[fund_code, u'本季回撤'] = ser_1s[u'回撤'] if ser_1s is not None and not ser_1s.empty else None
 
                 # # 计算预估偏离
                 # for i in range(3):
                 #     datex = df0.loc[i, 'value_date'].strftime(u'%m月%d日')
-                #     num1 = df.loc[code, datex + u"预估净值"].iloc[0] if isinstance(df.loc[code, datex + u"预估净值"], pd.core.series.Series) \
-                #                                                      else df.loc[code, datex + u"预估净值"]
-                #     num2 = df.loc[code, datex + u"结算净值"].iloc[0] if isinstance(df.loc[code, datex + u"结算净值"], pd.core.series.Series) \
-                #                                                      else df.loc[code, datex + u"结算净值"]
+                #     num1 = df.loc[fund_code, datex + u"预估净值"].iloc[0] if isinstance(df.loc[fund_code, datex + u"预估净值"], pd.core.series.Series) \
+                #                                                      else df.loc[fund_code, datex + u"预估净值"]
+                #     num2 = df.loc[fund_code, datex + u"结算净值"].iloc[0] if isinstance(df.loc[fund_code, datex + u"结算净值"], pd.core.series.Series) \
+                #                                                      else df.loc[fund_code, datex + u"结算净值"]
                 #
                 #     if num1 and num2:
-                #         df.loc[code, datex + u"预估偏离"] = float(num1) - float(num2)
+                #         df.loc[fund_code, datex + u"预估偏离"] = float(num1) - float(num2)
                 #     else:
                 #         # 保持格式
-                #         df.loc[code, datex + u"预估偏离"] = ''
+                #         df.loc[fund_code, datex + u"预估偏离"] = ''
 
-                df.loc[code, u'本月收益回撤比'] = ser_1m[u'收益回撤比'] if ser_1m is not None and not ser_1m.empty else None
-                df.loc[code, u'前月收益回撤比'] = ser_1m_before[u'收益回撤比'] if ser_1m_before is not None and not ser_1m_before.empty else None
+                # df.loc[fund_code, u'本月收益回撤比'] = ser_1m[u'收益回撤比'] if ser_1m is not None and not ser_1m.empty else None
+                # df.loc[fund_code, u'前月收益回撤比'] = ser_1m_before[u'收益回撤比'] if ser_1m_before is not None and not ser_1m_before.empty else None
 
                 df.index.name = u'基金代号'
                 df.rename({'fund_code':u'基金代号'}, axis=1).to_csv('net_value_cal_display.csv', index=None, encoding='ascii')
                 print u"耗时:", time.time() - start_time
             except:
-                log_obj.error('%s计算时出错' %code)
+                log_obj.error(u'%s计算时出错' %fund_code)
                 log_obj.error(traceback.format_exc())
 
     def main(self):
@@ -593,10 +641,10 @@ class net_value_cal_display(object):
 
 
 if __name__ == '__main__':
-    # if len(sys.argv)>1:
-    #     net_value_cal_display = net_value_cal_display(method=sys.argv[1])
-    # else:
-    #     net_value_cal_display = net_value_cal_display()
-    net_value_cal_display = net_value_cal_display(method='weekly')
+    if len(sys.argv)>1:
+        net_value_cal_display = net_value_cal_display(method=sys.argv[1])
+    else:
+        net_value_cal_display = net_value_cal_display()
+    # net_value_cal_display = net_value_cal_display(method='weekly')
     net_value_cal_display.main()
 

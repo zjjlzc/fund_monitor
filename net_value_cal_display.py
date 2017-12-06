@@ -454,9 +454,7 @@ class net_value_cal_display(object):
         df = pd.DataFrame(code_list, columns=['fund_code',])
         df.index = df['fund_code']
 
-        date_today = date_ser.iloc[-1]
-
-
+        date_today = date_ser.iloc[-2]
 
         start_time = time.time()
         for fund_code in df.index:
@@ -466,18 +464,41 @@ class net_value_cal_display(object):
                     print u'空白行，略过'
                     continue
 
+                if re.search(r'^[^\d]+$', fund_code):
+                    df.loc[fund_code, u'基金名称'] = ''
+                    continue
+
                 # 基金类型,基金名称，基金分类
                 sql = """
                 SELECT `fund_code`, `fund_name`, `fund_type`, `1st_class`, `2nd_class`, `3rd_class` FROM `fund_info` WHERE `fund_code` = '%s'
                 """ % fund_code
                 with closing(pymysql.connect('10.10.10.15', 'spider', 'jlspider', 'spider', charset='utf8')) as conn:
-                    df0 = pd.read_sql(sql, conn)
+                    fund_info = pd.read_sql(sql, conn)
 
-                df.loc[fund_code, u'基金名称'] = df0['fund_name'].iloc[0]
-                df.loc[fund_code, u'基金类型'] = df0['fund_type'].iloc[0]
-                df.loc[fund_code, u'一级分类'] = df0['1st_class'].iloc[0]
-                df.loc[fund_code, u'二级分类'] = df0['2nd_class'].iloc[0]
-                df.loc[fund_code, u'三级分类'] = df0['3rd_class'].iloc[0]
+                df.loc[fund_code, u'基金名称'] = fund_info['fund_name'].iloc[0]
+
+
+                # 近期净值和收益率
+                date_str = date_today.strftime('%Y-%m-%d')
+                sql = """
+                SELECT `value_date`,`estimate_net_value`,`estimate_daily_growth_rate`,`net_asset_value`,`daily_growth_rate` FROM `eastmoney_daily_data`
+                WHERE `value_date` <= "%s" AND `fund_code` = "%s"
+                ORDER BY `value_date` DESC
+                LIMIT 3
+                """ %(date_str,fund_code)
+                with closing(pymysql.connect('10.10.10.15', 'spider', 'jlspider', 'spider', charset='utf8')) as conn:
+                    net_value_df = pd.read_sql(sql, conn)
+
+                for i in range(1):
+                    datex = net_value_df.loc[i, 'value_date'].strftime(u'%m月%d日')
+                    df.loc[fund_code, datex + u"预估净值"] = net_value_df.loc[i, 'estimate_net_value'] if not net_value_df.empty else None
+                    df.loc[fund_code, datex + u"结算净值"] = net_value_df.loc[i, 'net_asset_value'] if not net_value_df.empty else None
+
+                for i in range(1,3):
+                    datex = net_value_df.loc[i, 'value_date'].strftime(u'%m月%d日')
+                    df.loc[fund_code, datex + u"结算净值"] = net_value_df.loc[i, 'net_asset_value'] if not net_value_df.empty else None
+
+
 
                 # 今天与上个月底的股票仓位预测
                 date_1 = datetime.datetime(year=date_today.year, month=(date_today - relativedelta(months=1)).month,
@@ -495,31 +516,9 @@ class net_value_cal_display(object):
                     datex = df0.loc[0, 'value_date'].strftime(u'%m月%d日')
                     df.loc[fund_code, datex + u"股票仓位"] = df0.loc[0, 'fund_shares_positions'] if not df0.empty else None
 
-                # 近期净值和收益率
-                date_str = date_today.strftime('%Y-%m-%d')
-                sql = """
-                SELECT `value_date`,`estimate_net_value`,`estimate_daily_growth_rate`,`net_asset_value`,`daily_growth_rate` FROM `eastmoney_daily_data`
-                WHERE `value_date` <= "%s" AND `fund_code` = "%s"
-                ORDER BY `value_date` DESC
-                LIMIT 3
-                """ %(date_str,fund_code)
-                with closing(pymysql.connect('10.10.10.15', 'spider', 'jlspider', 'spider', charset='utf8')) as conn:
-                    df0 = pd.read_sql(sql, conn)
 
-                for i in range(1):
-                    datex = df0.loc[i, 'value_date'].strftime(u'%m月%d日')
-                    df.loc[fund_code, datex + u"预估净值"] = df0.loc[i, 'estimate_net_value'] if not df0.empty else None
-                    df.loc[fund_code, datex + u"结算净值"] = df0.loc[i, 'net_asset_value'] if not df0.empty else None
 
-                for i in range(1,3):
-                    datex = df0.loc[i, 'value_date'].strftime(u'%m月%d日')
-                    df.loc[fund_code, datex + u"结算净值"] = df0.loc[i, 'net_asset_value'] if not df0.empty else None
-
-                for i in range(1):
-                    datex = df0.loc[i, 'value_date'].strftime(u'%m月%d日')
-                    #df.loc[fund_code, datex + u"预估净值收益率"] = df0.loc[i, 'estimate_daily_growth_rate'] if not df0.empty else None
-                    df.loc[fund_code, datex + u"结算净值收益率"] = df0.loc[i, 'daily_growth_rate'] if not df0.empty else None
-                # print df
+                df.loc[fund_code, u"日收益率"] = net_value_df.loc[0, 'daily_growth_rate'] if not net_value_df.empty else None
 
                 d = {
                     u'5天':{
@@ -573,7 +572,11 @@ class net_value_cal_display(object):
                     data_type = u'收益回撤比'
                     df.loc[fund_code, s + data_type] = d[s]['res'][data_type] if d[s]['res'] is not None and not d[s]['res'].empty else None
 
-
+                # 补齐基金分类
+                df.loc[fund_code, u'基金类型'] = fund_info['fund_type'].iloc[0]
+                df.loc[fund_code, u'一级分类'] = fund_info['1st_class'].iloc[0]
+                df.loc[fund_code, u'二级分类'] = fund_info['2nd_class'].iloc[0]
+                df.loc[fund_code, u'三级分类'] = fund_info['3rd_class'].iloc[0]
                 # # 5天
                 # date1 = date_ser.iloc[-5]
                 # date2 = date_today

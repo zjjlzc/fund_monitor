@@ -29,6 +29,13 @@ class calculation(object):
         pass
 
     def earnings_cal(self, fund_code, df, **kwarg):
+        """
+
+        :param fund_code: 净值的数列
+        :param df:
+        :param kwarg:
+        :return:
+        """
         if df.empty:
             print 'earnings_cal=>', fund_code, u'数据为空'
             return None
@@ -48,8 +55,6 @@ class calculation(object):
         print u"正在准备计算%s的从%s到%s的数据" % (fund_code, date1, date2)
         #print date_col, value_col, date1, date2
         target_col = u'retracement'
-
-        df.to_csv('test.csv')
 
         df = df.dropna()  # 剔除目标字段中的空值行
         df = df[df[value_col].astype(np.str) != ''].copy() # 剔除目标字段中的空白字符

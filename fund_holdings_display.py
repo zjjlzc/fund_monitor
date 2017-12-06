@@ -167,12 +167,12 @@ class fund_holdings_display(object):
             #     if code not in code_list:
             #         code_list.append(code)
 
-            if os.path.exists('final_output.csv'):
-                os.remove('final_output.csv')
+            if os.path.exists('fund_holdings_display.csv'):
+                os.remove('fund_holdings_display.csv')
 
             for fund_code in code_list:
-                if not fund_code:
-                    print u'空白行，略过'
+                if not fund_code or re.search(r'^[^\d]+$', fund_code):
+                    print u'空白或标题行，略过'
                     continue
                 print fund_code
                 df = fund_holdings_display.get_data(fund_code)
@@ -185,11 +185,11 @@ class fund_holdings_display(object):
                 fund_holdings_display.data_display(date_d)
 
                 df_tmp = pd.read_excel(r'temp_data.xls')
-                df_tmp.to_csv(r'final_output.csv', mode='a')
-                pd.Series(['', ]).to_csv(r'final_output.csv', mode='a')
-                with open('final_output.csv', 'r') as f:
+                df_tmp.to_csv(r'fund_holdings_display.csv', mode='a')
+                pd.Series(['', ]).to_csv(r'fund_holdings_display.csv', mode='a')
+                with open('fund_holdings_display.csv', 'r') as f:
                     text = re.sub('Unnamed: \d+', '', f.read())
-                with open('final_output.csv', 'w') as f:
+                with open('fund_holdings_display.csv', 'w') as f:
                     f.write(text)
         except:
             print traceback.format_exc()

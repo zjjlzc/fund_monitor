@@ -20,5 +20,7 @@ class FundMonitorItem(scrapy.Item):
     fund_name = scrapy.Field()
     url = scrapy.Field()
     plate_name = scrapy.Field()
+    plate_code = scrapy.Field()
+    plate_type = scrapy.Field()
 
 

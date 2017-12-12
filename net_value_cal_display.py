@@ -175,8 +175,7 @@ class net_value_cal_display(object):
         # df.index = df['fund_code']
         df = pd.DataFrame([])
 
-        date_ser = date_ser.copy()
-
+        global date_ser
         last_friday = max([date for date in date_ser if date.isoweekday()==5])
         date_ser = date_ser[date_ser<=last_friday]
         # print last_friday, date_ser

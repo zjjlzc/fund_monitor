@@ -153,9 +153,9 @@ class fund_holdings_display(object):
 
             newWb.save(r'temp_data.xls')
 
-    def display_all(self):
+    def display_all(self, fund_file='important_fund.txt'):
         try:
-            with open('important_fund.txt', 'r') as f:
+            with open(fund_file, 'r') as f:
                 code_list = f.read().split('\n')
 
             # sql = """
@@ -167,32 +167,39 @@ class fund_holdings_display(object):
             #     if code not in code_list:
             #         code_list.append(code)
 
-            if os.path.exists('fund_holdings_display.csv'):
-                os.remove('fund_holdings_display.csv')
+            output_file = 'fund_holdings_display.csv'
+
+            if os.path.exists(output_file):
+                os.remove(output_file)
 
             for fund_code in code_list:
                 if not fund_code or re.search(r'^[^\d]+$', fund_code):
                     print u'空白或标题行，略过'
                     continue
                 print fund_code
-                df = fund_holdings_display.get_data(fund_code)
-                date_d = fund_holdings_display.data_classify(df)
-                date_d = fund_holdings_display.df_status(date_d)
+
+                df = self.get_data(fund_code)
+                date_d = self.data_classify(df)
+                date_d = self.df_status(date_d)
 
                 if len(date_d) < 1:
                     print 'pass', fund_code
                     continue
-                fund_holdings_display.data_display(date_d)
+                self.data_display(date_d)
 
                 df_tmp = pd.read_excel(r'temp_data.xls')
-                df_tmp.to_csv(r'fund_holdings_display.csv', mode='a')
-                pd.Series(['', ]).to_csv(r'fund_holdings_display.csv', mode='a')
-                with open('fund_holdings_display.csv', 'r') as f:
+                df_tmp.to_csv(output_file, mode='a')
+                pd.Series(['', ]).to_csv(output_file, mode='a')
+                with open(output_file, 'r') as f:
                     text = re.sub('Unnamed: \d+', '', f.read())
-                with open('fund_holdings_display.csv', 'w') as f:
+                with open(output_file, 'w') as f:
                     f.write(text)
+
+            return output_file
         except:
             print traceback.format_exc()
+
+
 
 
     def comb_display(self):
@@ -206,8 +213,8 @@ class fund_holdings_display(object):
 
         for fund_code in d:
             #print fund_code
-            df = fund_holdings_display.get_data(fund_code) # 获取fund_code的数据
-            date_d = fund_holdings_display.data_classify(df) # 将数据按截止日期分类
+            df = self.get_data(fund_code) # 获取fund_code的数据
+            date_d = self.data_classify(df) # 将数据按截止日期分类
             fund_data[fund_code] = date_d # 存入字典
 
         # 统计共有的截止日期

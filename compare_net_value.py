@@ -133,11 +133,11 @@ class compare_net_value(object):
 
                     print u'计算全期数据'
                     df['value_date'] = df.index.tolist()
-                    ser = calculation.earnings_cal(fund_code, df, date_col='value_date', value_col='fitting_net_value') #self.simple_cal(df['fitting_net_value'],u'收益率')
+                    ser = calculation.earnings_cal(fund_code, df, date_col='value_date', value_col='fitting_net_value', data_type='fund') #self.simple_cal(df['fitting_net_value'],u'收益率')
                     ser = ser.drop([u'基金代号', ])
                     ser1 = ser.rename({key:u'拟合净值' + key for key in ser.index}).copy()
 
-                    ser = calculation.earnings_cal(fund_code, df, date_col='value_date', value_col='cal_net_asset_value') # self.simple_cal(df['cal_net_asset_value'],u'收益率')
+                    ser = calculation.earnings_cal(fund_code, df, date_col='value_date', value_col='cal_net_asset_value', data_type='fund') # self.simple_cal(df['cal_net_asset_value'],u'收益率')
                     ser = ser.drop([u'基金代号', ])
                     ser2 = ser.rename({key:u'折算净值' + key for key in ser.index}).copy()#ser.name = u'折算净值收益率'
                     ser_total = ser1.append(ser2)
@@ -151,14 +151,15 @@ class compare_net_value(object):
                     date1 = datetime.datetime.strptime(date_l[-1][0], '%Y-%m-%d')
                     date2 = datetime.datetime.strptime(date_l[-1][-1], '%Y-%m-%d')
                     ser = calculation.earnings_cal(fund_code, df, date_col='value_date', value_col='fitting_net_value', date1=date1,
-                                                   date2=date2)  # self.simple_cal(func(df['fitting_net_value'], date_str1, date_str2), u'收益率')
+                                                   date2=date2, data_type='fund')  # self.simple_cal(func(df['fitting_net_value'], date_str1, date_str2), u'收益率')
                     if ser is None:
                         continue
                     ser = ser[[u'收益率', ]].copy()
                     ser = ser.rename({key: u'近期拟合净值' + key for key in ser.index})  # ser.name = u'拟合净值收益率' + str(i)
                     ser_period = ser_period.append(ser)
 
-                    ser = calculation.earnings_cal(fund_code, df, date_col='value_date', value_col='cal_net_asset_value', date1=date1, date2=date2)
+                    ser = calculation.earnings_cal(fund_code, df, date_col='value_date', value_col='cal_net_asset_value',
+                                                   date1=date1, date2=date2, data_type='fund')
                     if ser is None:
                         continue
                     ser = ser[[u'收益率', ]].copy()
@@ -173,14 +174,16 @@ class compare_net_value(object):
                         #print cut_off_day, date_str1, date_str2
                         date1 = datetime.datetime.strptime(date_str1, '%Y-%m-%d')
                         date2 = datetime.datetime.strptime(date_str2, '%Y-%m-%d')
-                        ser = calculation.earnings_cal(fund_code, df, date_col='value_date', value_col='fitting_net_value', date1=date1, date2=date2)# self.simple_cal(func(df['fitting_net_value'], date_str1, date_str2), u'收益率')
+                        ser = calculation.earnings_cal(fund_code, df, date_col='value_date', value_col='fitting_net_value',
+                                                       date1=date1, date2=date2, data_type='fund')# self.simple_cal(func(df['fitting_net_value'], date_str1, date_str2), u'收益率')
                         if ser is None:
                             continue
                         ser = ser[[u'收益率',]].copy()
                         ser = ser.rename({key:u'拟合净值' + key + str(i) for key in ser.index})#ser.name = u'拟合净值收益率' + str(i)
                         ser_period = ser_period.append(ser)
 
-                        ser = calculation.earnings_cal(fund_code, df, date_col='value_date', value_col='cal_net_asset_value', date1=date1, date2=date2)
+                        ser = calculation.earnings_cal(fund_code, df, date_col='value_date', value_col='cal_net_asset_value',
+                                                       date1=date1, date2=date2, data_type='fund')
                         if ser is None:
                             continue
                         ser = ser[[u'收益率',]].copy()
@@ -324,9 +327,9 @@ class compare_net_value(object):
                 df.to_excel(writer, title, index=None)
             writer.save()
 
-    def daily_display(self):
+    def daily_display(self, fund_file='important_fund.txt'):
 
-        with open(r'important_fund.txt', 'r') as f:
+        with open(fund_file, 'r') as f:
             fund_code_list = f.read().split('\n')
 
         date_l = [
@@ -346,8 +349,8 @@ class compare_net_value(object):
                 print u'空白行，略过'
                 continue
 
-            if re.search(r'^[^\d]+$', fund_code):
-                output.loc[fund_code, u'基金名称'] = fund_code
+            if re.search(r'[^\d]+', fund_code):
+                output.loc[fund_code.decode('gbk'), u'基金代号'] = fund_code.decode('gbk')
                 continue
 
             print u"正在计算基金：", fund_code
@@ -361,15 +364,34 @@ class compare_net_value(object):
                 df.loc[:, 'cal_net_asset_value'] = df.loc[:, 'accumulative_net_value'].apply(
                     lambda x: float(x) / float(df['accumulative_net_value'].iat[0]))
 
-                df = df.reindex(['accumulative_net_value', 'cal_net_asset_value', 'fitting_net_value'], axis=1)
+                df = df.reindex(['cal_net_asset_value', 'fitting_net_value', 'accumulative_net_value'], axis=1)
 
                 # 改成中文标题后输出，源数据不改
                 # df['fund_code'] = fund_code
-                df.rename({
-                    'fund_code': fund_code + u'基金代码',
-                    'accumulative_net_value': fund_code + u'基金净值',
-                    'cal_net_asset_value': fund_code + u'折算基金净值',
-                    'fitting_net_value': fund_code + u'拟合净值'}, axis=1).T.to_csv(u'compare_net_value_计算过程.csv', mode='a')
+                output_df0 = df.copy()
+                output_df0[u'比较'] = [datetime.datetime.strptime(date, '%Y-%m-%d').isoweekday() for date in output_df0.index]
+
+
+                rate = ((output_df0[output_df0[u'比较']==5])['accumulative_net_value'].astype(np.float) / (output_df0[output_df0[u'比较']==5])['accumulative_net_value'].shift(1).astype(np.float) -1).copy()
+                # print (output_df0[output_df0[u'比较']==5])['accumulative_net_value'].astype(np.float)
+                # print (output_df0[output_df0[u'比较']==5])['accumulative_net_value'].shift(1).astype(np.float)
+                # print rate
+                output_df0[u'比较'] = rate
+                # print output_df0
+
+                sql = """
+                SELECT `fund_code`, `fund_name` FROM `fund_info`
+                WHERE `fund_code` = '%s'
+                """ %fund_code
+                with closing(pymysql.connect('10.10.10.15', 'spider', 'jlspider', 'spider', charset='utf8')) as conn:
+                    df0 = pd.read_sql(sql, conn)
+                    fund_name = df0['fund_name'].iloc[0]
+
+                output_df0.rename({
+                    'fund_code': fund_name + u'基金代码',
+                    'accumulative_net_value': fund_name + u'基金净值',
+                    'cal_net_asset_value': fund_name + u'折算基金净值',
+                    'fitting_net_value': fund_name + u'拟合净值'}, axis=1).T.to_csv(u'compare_net_value_计算过程.csv', mode='a')
 
                 func = lambda ser, date_str1, date_str2: ser[
                     (pd.to_datetime(ser.index) >= datetime.datetime.strptime(date_str1, '%Y-%m-%d')) & (
@@ -378,12 +400,12 @@ class compare_net_value(object):
                 print u'计算全期数据'
                 df['value_date'] = df.index.tolist()
                 ser = calculation.earnings_cal(fund_code, df, date_col='value_date',
-                                               value_col='fitting_net_value')  # self.simple_cal(df['fitting_net_value'],u'收益率')
+                                               value_col='fitting_net_value', data_type='fund')  # self.simple_cal(df['fitting_net_value'],u'收益率')
                 ser = ser.drop([u'基金代号', ])
                 ser1 = ser.rename({key: u'拟合净值' + key for key in ser.index}).copy()
 
                 ser = calculation.earnings_cal(fund_code, df, date_col='value_date',
-                                               value_col='cal_net_asset_value')  # self.simple_cal(df['cal_net_asset_value'],u'收益率')
+                                               value_col='cal_net_asset_value', data_type='fund')  # self.simple_cal(df['cal_net_asset_value'],u'收益率')
                 ser = ser.drop([u'基金代号', ])
                 ser2 = ser.rename({key: u'折算净值' + key for key in ser.index}).copy()  # ser.name = u'折算净值收益率'
                 ser_total = ser1.append(ser2)
@@ -425,12 +447,14 @@ class compare_net_value(object):
                 output = output.reindex(output_colums, axis=1)
                 print output
 
-                output.to_excel('compare_net_value.xls', index=None)
+                output.to_excel('compare_net_value.xls')
 
                 print u"耗时：", time.time() - start_time
             except:
                 log_obj.error('%s计算时出错' % fund_code)
                 log_obj.error(traceback.format_exc())
+
+        return 'compare_net_value.xls', u'compare_net_value_计算过程.csv'
 
 
     def stock_fitting(self, date1='2017-10-21', date2='2018-01-01'):
@@ -450,7 +474,7 @@ class compare_net_value(object):
             df.T.to_csv(u'stock_fitting_计算过程.csv', mode='a')
 
             df = df.reset_index()
-            df_total = df_total.append(calculation.earnings_cal(code, df, date_col='value_date', value_col=code), ignore_index=True)
+            df_total = df_total.append(calculation.earnings_cal(code, df, date_col='value_date', value_col=code, data_type='fund'), ignore_index=True)
         print df_total
 
     def estimate_vs_fitting(self):

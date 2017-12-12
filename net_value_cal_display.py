@@ -60,9 +60,36 @@ df = pd.DataFrame(json_data['data']['candle']['000001.SS'])
 date_ser = df[0].apply(lambda num:datetime.datetime.strptime(str(num),'%Y%m%d'))
 
 class net_value_cal_display(object):
+
     def __init__(self, method='daily'):
         self.method = method
         print 'method=', self.method
+
+        date_today = date_ser.iloc[-1]
+        self.daily_report_date = {
+            u'5天': {
+                'date1': date_ser.iloc[-5],
+                'date2': date_today
+            },
+            u'本周': {
+                'date1': date_today - datetime.timedelta(date_today.weekday()),
+                'date2': date_today
+            },
+            u'本月': {
+                'date1': datetime.datetime(year=date_today.year, month=date_today.month, day=1),
+                'date2': date_today
+            },
+            u'前月': {
+                'date1': datetime.datetime(year=date_today.year, month=date_today.month - 1, day=1),
+                'date2': datetime.datetime(year=date_today.year, month=date_today.month - 1,
+                                           day=calendar.monthrange(date_today.year, month=date_today.month - 1)[1])
+            },
+            u'本季': {
+                'date1': datetime.datetime(year=date_today.year, month=int((date_today.month - 1) / 3) * 3 + 1, day=1),
+                'date2': date_today
+            }
+
+        }
 
     def get_data(self, code, date1, date2):
         date1 = date1.strftime('%Y-%m-%d')
@@ -134,7 +161,7 @@ class net_value_cal_display(object):
                              index=[u'基金代号', earnings_type, u'回撤', u'收益回撤比'])
 
     def weekly_report(self):
-        with open('important_fund1.txt', 'r') as f:
+        with open('important_fund.txt', 'r') as f:
             code_list = f.read().split('\n')
 
         # sql = """
@@ -145,20 +172,25 @@ class net_value_cal_display(object):
         # for code in df0.iloc[:,0].tolist():
         #     if code not in code_list:
         #         code_list.append(code)
-        if os.path.exists('net_value_cal_display.csv'):
-            os.remove('net_value_cal_display.csv')
-
-        df = pd.DataFrame(code_list, columns=['fund_code',])
-        df.index = df['fund_code']
+        if os.path.exists(u'周报.xls'):
+            os.remove(u'周报.xls')
+        #
+        # df = pd.DataFrame(code_list, columns=['fund_code',])
+        # df.index = df['fund_code']
+        df = pd.DataFrame([])
 
         date_today = datetime.datetime(year=datetime.datetime.now().year, month=datetime.datetime.now().month,day=datetime.datetime.now().day)
 
         start_time = time.time()
-        for code in df.index:
+        for code in code_list:
             try:
                 if not code:
-                    df.loc[code, :] = None
+                    df.loc[code,:] = None
                     print u'空白行，略过'
+                    continue
+
+                if re.search(ur'[^\d]+', code):
+                    df.loc[code.decode('gbk'), :] = ''
                     continue
 
                 # 基金类型,基金名称，基金分类
@@ -275,7 +307,7 @@ class net_value_cal_display(object):
                         df0 = pd.read_sql(sql, conn)
 
                     datex = df0.loc[0, 'value_date'].strftime(u'%m月%d日')
-                    df.loc[code, datex + "单位净值"] = df0.loc[0, 'net_asset_value'] if not df0.empty else None
+                    df.loc[code, datex + u"单位净值"] = df0.loc[0, 'net_asset_value'] if not df0.empty else None
                     #df.loc[code, datex + u"累计净值"] = df0.loc[0, 'accumulative_net_value'] if not df0.empty else None
 
                 # 今天与上个月底的股票仓位预测
@@ -409,7 +441,7 @@ class net_value_cal_display(object):
                 #date2 = datetime.datetime(2017, 10, 31)
                 #summary_listing = self.simple_cal(code, date1, date2, u'年化收益')
 
-                df.to_csv('net_value_cal_display.csv', index=None, encoding='ascii')
+                df.to_excel(u'周报.xls')
                 print u"耗时:", time.time() - start_time
             except:
                 log_obj.error('%s计算时出错' %code)
@@ -443,29 +475,30 @@ class net_value_cal_display(object):
             #         newWs.write(r, col, monitor_col[r], style)
             # newWb.save('net_value_cal_display.xls')
 
-    def daily_report(self):
-        with open('important_fund.txt', 'r') as f:
+    def daily_report(self, fund_file='important_fund.txt'):
+        with open(fund_file, 'r') as f:
             code_list = f.read().split('\n')
 
-        output_file = u'%s净值日报.csv' %datetime.datetime.now().strftime(u'%Y-%m-%d')
+        output_file = u'%s净值日报.xls' %datetime.datetime.now().strftime(u'%Y-%m-%d')
         if os.path.exists(output_file):
             os.remove(output_file)
 
-        df = pd.DataFrame(code_list, columns=['fund_code',])
-        df.index = df['fund_code']
+        df = pd.DataFrame([])
+        # df.index = df['fund_code'].apply(lambda s:s.decode('gbk'))
 
-        date_today = date_ser.iloc[-2]
+        date_today = date_ser.iloc[-1]
 
         start_time = time.time()
-        for fund_code in df.index:
+        for fund_code in code_list:
+            print 'fund_code = ', fund_code
             try:
                 if not fund_code:
                     df.loc[fund_code,:] = None
                     print u'空白行，略过'
                     continue
 
-                if re.search(r'^[^\d]+$', fund_code):
-                    df.loc[fund_code, u'基金名称'] = ''
+                if re.search(r'[^\d]+', fund_code):
+                    df.loc[fund_code.decode('gbk'), :] = ''
                     continue
 
                 # 基金类型,基金名称，基金分类
@@ -492,7 +525,7 @@ class net_value_cal_display(object):
                 for i in range(1):
                     datex = net_value_df.loc[i, 'value_date'].strftime(u'%m月%d日')
                     df.loc[fund_code, datex + u"预估净值"] = net_value_df.loc[i, 'estimate_net_value'] if not net_value_df.empty else None
-                    df.loc[fund_code, datex + u"结算净值"] = net_value_df.loc[i, 'net_asset_value'] if not net_value_df.empty else None
+                    # df.loc[fund_code, datex + u"结算净值"] = net_value_df.loc[i, 'net_asset_value'] if not net_value_df.empty else None
 
                 for i in range(1,3):
                     datex = net_value_df.loc[i, 'value_date'].strftime(u'%m月%d日')
@@ -500,10 +533,10 @@ class net_value_cal_display(object):
 
 
 
-                # 今天与上个月底的股票仓位预测
+                # 昨天与上个月底的股票仓位预测
                 date_1 = datetime.datetime(year=date_today.year, month=(date_today - relativedelta(months=1)).month,
                                   day=calendar.monthrange(date_today.year, (date_today - relativedelta(months=1)).month)[1])
-                for date0 in [date_today, date_1]:
+                for date0 in [date_ser.iloc[-2], date_1]:
                     sql = """
                     SELECT `value_date`, `fund_shares_positions` FROM `eastmoney_daily_data`
                     WHERE `value_date` <= "%s" AND `fund_code` = "%s"
@@ -518,35 +551,9 @@ class net_value_cal_display(object):
 
 
 
-                df.loc[fund_code, u"日收益率"] = net_value_df.loc[0, 'daily_growth_rate'] if not net_value_df.empty else None
+                df.loc[fund_code, u"日收益率"] = net_value_df.loc[0, 'estimate_daily_growth_rate'] if not net_value_df.empty else None
 
-                d = {
-                    u'5天':{
-                        'date1':date_ser.iloc[-5],
-                        'date2':date_today
-                    },
-                    u'本周':{
-                        'date1':date_today - datetime.timedelta(date_today.weekday()),
-                        'date2':date_today
-                    },
-                    u'本月':{
-                        'date1':datetime.datetime(year=date_today.year, month=date_today.month, day=1),
-                        'date2':date_today
-                    },
-                    u'前月':{
-                        'date1':datetime.datetime(year=date_today.year, month=date_today.month-1, day=1),
-                        'date2':datetime.datetime(year=date_today.year, month=date_today.month-1, day=calendar.monthrange(date_today.year,month=date_today.month-1)[1])
-                    },
-                    u'本季':{
-                        'date1':datetime.datetime(year=date_today.year, month= int((date_today.month - 1) / 3) * 3 + 1, day=1),
-                        'date2':date_today
-                    }
-
-                }
-                # for key in d:
-                #     print key
-                #     print d[key]['date1']
-                #     print d[key]['date2']
+                d = self.daily_report_date.copy()
 
                 date1 = min([d[key]['date1'] for key in d])
                 date2 = max([d[key]['date2'] for key in d])
@@ -558,7 +565,7 @@ class net_value_cal_display(object):
 
                 for key in d:
                     d[key]['res'] = calculation.earnings_cal(fund_code, df0, date1=d[key]['date1'], date2=d[key]['date2'],
-                                                             date_col='value_date', value_col='accumulative_net_value')
+                                                             date_col='value_date', value_col='accumulative_net_value', data_type='fund')
 
                 for s in [u'5天', u'本周', u'本月', u'前月', u'本季']:
                     data_type = u'收益率'
@@ -632,11 +639,67 @@ class net_value_cal_display(object):
                 # df.loc[fund_code, u'前月收益回撤比'] = ser_1m_before[u'收益回撤比'] if ser_1m_before is not None and not ser_1m_before.empty else None
 
                 df.index.name = u'基金代号'
-                df.rename({'fund_code':u'基金代号'}, axis=1).to_csv(output_file, index=None, encoding='ascii')
+                # df.rename({'fund_code':u'基金代号'}, axis=1).to_csv(output_file, index=None, encoding='ascii')
+                df.rename({'fund_code': u'基金代号'}, axis=1).to_excel(output_file)
                 print u"耗时:", time.time() - start_time
             except:
-                log_obj.error(u'%s计算时出错' %fund_code)
+                log_obj.error(u'%s计算时出错' %fund_code.decode('gbk'))
                 log_obj.error(traceback.format_exc())
+
+        return output_file
+
+    def index_calculation(self):
+        index_dict = {u'000016.SH':u'上证50',
+                      u'399300.SZ':u'沪深300',
+                      u'399905.SZ':u'中证500'}
+
+        output_file = 'index_calculation.xls'
+
+        index_df = pd.DataFrame([])
+        for key in index_dict:
+            index_code = key
+            index_name = index_dict[key]
+            d = {
+                'prod_code': index_code,
+                'candle_mode': '0',
+                'data_count': '1000',
+                'get_type': 'offset',
+                'search_direction': '1',
+                'candle_period': '6',
+            }
+            json_data = api51.connect(user_key, d)
+            df = pd.DataFrame(json_data['data']['candle'][index_code], columns=json_data['data']['candle'][u'fields'])
+            df['min_time'] = pd.to_datetime(df['min_time'], format='%Y%m%d')
+
+            index_df.loc[index_code, u'指数名称'] = index_name
+
+            d = self.daily_report_date.copy()
+            d[u'今日'] = {}
+            d[u'今日']['date1'] = date_ser.iloc[-2]
+            d[u'今日']['date2'] = date_ser.iloc[-1]
+
+            for key in d:
+                # print key
+                d[key]['res'] = calculation.earnings_cal(index_df, df, date1=d[key]['date1'], date2=d[key]['date2'],
+                                                         date_col='min_time', value_col='close_px')
+
+
+            for s in [u'今日', u'5天', u'本周', u'本月', u'前月', u'本季']:
+                data_type = u'收益率'
+                index_df.loc[index_code, s + data_type] = d[s]['res'][data_type] if d[s]['res'] is not None and not d[s]['res'].empty else None
+
+            for s in [u'5天', u'本月', u'前月', u'本季']:
+                data_type = u'最大回撤'
+                index_df.loc[index_code, s + data_type] = d[s]['res'][data_type] if d[s]['res'] is not None and not d[s]['res'].empty else None
+
+            for s in [u'本月', u'前月']:
+                data_type = u'收益回撤比'
+                index_df.loc[index_code, s + data_type] = d[s]['res'][data_type] if d[s]['res'] is not None and not d[s]['res'].empty else None
+
+            index_df.to_excel(output_file)
+
+        return output_file
+
 
     def main(self):
         if self.method == 'weekly':
@@ -651,6 +714,6 @@ if __name__ == '__main__':
         net_value_cal_display = net_value_cal_display(method=sys.argv[1])
     else:
         net_value_cal_display = net_value_cal_display()
-    # net_value_cal_display = net_value_cal_display(method='weekly')
-    net_value_cal_display.main()
+    net_value_cal_display = net_value_cal_display.weekly_report()
+    # net_value_cal_display.index_calculation()
 

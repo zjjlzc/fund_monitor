@@ -61,10 +61,11 @@ class calculation(object):
         df.loc[:, date_col] = pd.to_datetime(df.loc[:, date_col]) # 将日期列的字符串转为日期
 
         # 截取所需时间内的数据,数据取到小于date1的最后一个
-        serx = df[date_col][df[date_col].between(datetime.datetime(1800, 1, 1), date1 - datetime.timedelta(1))]
-        if not serx.empty:
-            serx = serx.sort_values()
-            date1 = serx.iat[-1]
+        if 'data_type' in kwarg and kwarg['data_type'] == 'fund':
+            serx = df[date_col][df[date_col].between(datetime.datetime(1800, 1, 1), date1 - datetime.timedelta(1))]
+            if not serx.empty:
+                serx = serx.sort_values()
+                date1 = serx.iat[-1]
         # 截取规定时间段内的数据
         df = df[df[date_col].between(date1, date2)].copy()
         if df.empty:
@@ -83,6 +84,7 @@ class calculation(object):
         #print df
 
         annual_yield = (df[value_col].iloc[-1] / df[value_col].iloc[0] - 1) * 365.0 / (df[date_col].iloc[-1] - df[date_col].iloc[0]).days
+        # print date1,date2,df[value_col]
         product_yield = df[value_col].iloc[-1] / df[value_col].iloc[0] - 1  # 最后一个除以第一个，减1
         retracement = min(df[target_col].dropna())
         if retracement:

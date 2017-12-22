@@ -327,7 +327,7 @@ class compare_net_value(object):
                 df.to_excel(writer, title, index=None)
             writer.save()
 
-    def daily_display(self, fund_file='important_fund.txt'):
+    def daily_display(self, fund_file='weekly_fund.txt'):
 
         with open(fund_file, 'r') as f:
             fund_code_list = f.read().split('\n')
@@ -336,7 +336,7 @@ class compare_net_value(object):
             # ['2016-09-30', '2016-10-20', '2017-04-19'],
             # ['2017-03-31', '2017-04-20', '2017-08-20'],
             # ['2017-06-30', '2017-08-21', '2017-10-20'],
-            ['2017-09-30', '2017-09-29', '2020-01-01'],
+            ['2017-09-30', '2017-09-29', datetime.datetime.now().strftime('%Y-%m-%d')],
         ]
         if os.path.exists(u'compare_net_value_计算过程.csv'):
             os.remove(u'compare_net_value_计算过程.csv')

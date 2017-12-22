@@ -105,5 +105,7 @@ class Spider(scrapy.Spider):
             log_obj.error("%s中无法解析\n原因：%s" %(self.name, traceback.format_exc()))
 
 
+
 if __name__ == '__main__':
-    pass
+    Spider = Spider()
+    # Spider.stock_flow()

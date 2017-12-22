@@ -16,5 +16,6 @@ sys.setdefaultencoding('utf8')
 
 
 if __name__ == '__main__':
-    os.system("scrapy crawl 0001")# -a method=daily")
-    os.system("scrapy crawl 0006")
+    # os.system("scrapy crawl 0001")# -a method=daily")
+    # os.system("scrapy crawl 0006")
+    os.system("scrapy crawl 0008")

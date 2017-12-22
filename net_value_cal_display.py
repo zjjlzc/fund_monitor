@@ -165,7 +165,7 @@ class net_value_cal_display(object):
 
     def weekly_report(self):
 
-        with open('important_fund.txt', 'r') as f:
+        with open('weekly_fund.txt', 'r') as f:
             code_list = f.read().split('\n')
 
         if os.path.exists(u'周报.xls'):
@@ -176,12 +176,16 @@ class net_value_cal_display(object):
         df = pd.DataFrame([])
 
         global date_ser
-        last_friday = max([date for date in date_ser if date.isoweekday()==5])
+
+        last_friday = max([date for date in date_ser if date.isoweekday()==5]) #  datetime.datetime(year=2017, month=10, day=31) #
         date_ser = date_ser[date_ser<=last_friday]
+        # print last_friday
+        # print last_friday - datetime.timedelta(7)
         # print last_friday, date_ser
 
         start_time = time.time()
         for fund_code in code_list:
+            print 'fund_code =>', fund_code
             try:
                 if not fund_code:
                     df.loc[fund_code,:] = None
@@ -292,7 +296,7 @@ class net_value_cal_display(object):
 
 
                 # 近三天，单位净值
-                for date0 in [date_ser[-1-i] for i in [1,2,3]]: # last_friday+relativedelta(days=-i)
+                for date0 in [date_ser.iloc[-1-i] for i in [1,2,3]]: # last_friday+relativedelta(days=-i)
                     date_str = date0.strftime('%Y-%m-%d')
                     #df[date0.strftime(u'%m月%d日') + "累计净值"] = None # 万一没有数据，不会打乱格式
                     sql = """
@@ -336,34 +340,51 @@ class net_value_cal_display(object):
                 func = lambda date1,date2: calculation.earnings_cal(fund_code, daily_data, date1=date1, date2=date2,
                                                              date_col='value_date', value_col='accumulative_net_value', data_type='fund')
 
-                # 今天日收益
-                ser = func(last_friday, last_friday)
-                df.loc[fund_code, u'%s收益率' %last_friday.strftime(u'%m月%d日')] = ser[u'收益率'] if ser is not None and not ser.empty else None
+                # # 今天日收益
+                # ser = func(last_friday, last_friday)
+                # df.loc[fund_code, u'%s收益率' %last_friday.strftime(u'%m月%d日')] = ser[u'收益率'] if ser is not None and not ser.empty else None
 
-                # 近三个月的月收益率
-                for date1 in [datetime.datetime(year=last_friday.year,month=(last_friday - relativedelta(months=i)).month,day=1) for i in [0,1,2]]:
-                    date2 = datetime.datetime(year=date1.year, month=date1.month, day=calendar.monthrange(date1.year,month=date1.month)[1])
-                    ser = func(date1, date2)
-                    df.loc[fund_code, u'%s年%s月收益' %(date1.year,date1.month)] = ser[u'收益率'] if ser is not None and not ser.empty else None
 
-                # 今年的季度数据
-                for month1 in [10,7,4,1]:
-                    month2 = month1 + 2
-                    date1 = datetime.datetime(year=last_friday.year,month=month1,day=1)
-                    date2 = datetime.datetime(year=last_friday.year,month=month2,day=calendar.monthrange(last_friday.year,month=month2)[1])
-                    ser = func(date1, date2)
-                    df.loc[fund_code, u'%s年%s月-%s月收益' % (date1.year, date1.month, date2.month)] = ser[u'收益率'] if ser is not None and not ser.empty else None
-
-                # 去年最后三个月的收益率
-                for month0 in [12,11,10]:
-                    date1 = datetime.datetime(year=last_friday.year-1, month=month0, day=1)
-                    date2 = datetime.datetime(year=last_friday.year-1, month=month0, day=calendar.monthrange(last_friday.year-1, month=month0)[1])
-                    ser = func(date1, date2)
-                    df.loc[fund_code, u'%s年%s月收益' % (date1.year, date1.month)] = ser[u'收益率'] if ser is not None and not ser.empty else None
 
                 d = {
+                    u'2017年9月30日至11月22日':{
+                        'date1': datetime.datetime(year=last_friday.year, month=9, day=30),
+                        'date2': datetime.datetime(year=last_friday.year, month=11, day=22)
+                    },
+                    u'2017年11月23日至12月15日':{
+                        'date1': datetime.datetime(year=last_friday.year, month=11, day=23),
+                        'date2': datetime.datetime(year=last_friday.year, month=12, day=15)
+                    },
+                    u'2017年1月1日至4月12日':{
+                        'date1': datetime.datetime(year=last_friday.year, month=1, day=1),
+                        'date2': datetime.datetime(year=last_friday.year, month=4, day=12)
+                    },
+                    u'2017年4月13日至5月10日': {
+                        'date1': datetime.datetime(year=last_friday.year, month=4, day=13),
+                        'date2': datetime.datetime(year=last_friday.year, month=5, day=10)
+                    },
+                    u'2017年4月13日至6月1日': {
+                        'date1': datetime.datetime(year=last_friday.year, month=4, day=13),
+                        'date2': datetime.datetime(year=last_friday.year, month=6, day=1)
+                    },
+                    u'2017年6月2日至9月12日': {
+                        'date1': datetime.datetime(year=last_friday.year, month=6, day=2),
+                        'date2': datetime.datetime(year=last_friday.year, month=9, day=12)
+                    },
+                    u'2017年5月12日至11月22日': {
+                        'date1': datetime.datetime(year=last_friday.year, month=5, day=12),
+                        'date2': datetime.datetime(year=last_friday.year, month=11, day=22)
+                    },
+                    u'2017年9月13日至12月15日': {
+                        'date1': datetime.datetime(year=last_friday.year, month=9, day=13),
+                        'date2': datetime.datetime(year=last_friday.year, month=12, day=15)
+                    },
+                    u'2017年11月14日至12月15日': {
+                        'date1': datetime.datetime(year=last_friday.year, month=11, day=14),
+                        'date2': datetime.datetime(year=last_friday.year, month=12, day=15)
+                    },
                     u'近一周': {
-                        'date1': last_friday-datetime.timedelta(7),
+                        'date1': last_friday-datetime.timedelta(6),
                         'date2': last_friday
                     },
                     u'近一个月': {
@@ -405,6 +426,32 @@ class net_value_cal_display(object):
                 }
                 for key in d:
                     d[key]['res'] = func(d[key]['date1'], date2=d[key]['date2'])
+
+                for s in [u'2017年1月1日至4月12日',u'2017年4月13日至5月10日',u'2017年4月13日至6月1日',u'2017年5月12日至11月22日',u'2017年6月2日至9月12日',
+                          u'2017年9月13日至12月15日',u'2017年9月30日至11月22日',u'2017年11月14日至12月15日',u'2017年11月23日至12月15日']:
+                    data_type = u'收益率'
+                    df.loc[fund_code, s + data_type] = d[s]['res'][data_type] if d[s]['res'] is not None and not d[s]['res'].empty else None
+
+                # 近三个月的月收益率
+                for date1 in [datetime.datetime(year=last_friday.year,month=(last_friday - relativedelta(months=i)).month,day=1) for i in [0,1,2]]:
+                    date2 = datetime.datetime(year=date1.year, month=date1.month, day=calendar.monthrange(date1.year,month=date1.month)[1])
+                    ser = func(date1, date2)
+                    df.loc[fund_code, u'%s年%s月收益' %(date1.year,date1.month)] = ser[u'收益率'] if ser is not None and not ser.empty else None
+
+                # 今年的季度数据
+                for month1 in [10,7,4,1]:
+                    month2 = month1 + 2
+                    date1 = datetime.datetime(year=last_friday.year,month=month1,day=1)
+                    date2 = datetime.datetime(year=last_friday.year,month=month2,day=calendar.monthrange(last_friday.year,month=month2)[1])
+                    ser = func(date1, date2)
+                    df.loc[fund_code, u'%s年%s月-%s月收益' % (date1.year, date1.month, date2.month)] = ser[u'收益率'] if ser is not None and not ser.empty else None
+
+                # 去年最后三个月的收益率
+                for month0 in [12,11,10]:
+                    date1 = datetime.datetime(year=last_friday.year-1, month=month0, day=1)
+                    date2 = datetime.datetime(year=last_friday.year-1, month=month0, day=calendar.monthrange(last_friday.year-1, month=month0)[1])
+                    ser = func(date1, date2)
+                    df.loc[fund_code, u'%s年%s月收益' % (date1.year, date1.month)] = ser[u'收益率'] if ser is not None and not ser.empty else None
 
                 for s in [u'近一周',u'近一个月',u'近三个月',u'近六个月',u'今年前三月',u'近一年',
                             u'近两年', u'今年以来',u'成立以来',u'2016年2月29日以来']:
@@ -811,3 +858,5 @@ if __name__ == '__main__':
     net_value_cal_display = net_value_cal_display.weekly_report()
     # net_value_cal_display.index_calculation()
 
+# http://dcfm.eastmoney.com//em_mutisvcexpandinterface/api/js/get?type=HSGTHDSTA&token=70f12f2f4f091e459a279469fe49eca5&filter=(SCODE=%27000063%27)&st=HDDATE&sr=-1&p=1&ps=50&js=var%20ANuhNwTP={pages:(tp),data:(x)}&rt=50437829
+# http://dcfm.eastmoney.com//em_mutisvcexpandinterface/api/js/get?type=HSGTHDSTA&token=1942f5da9b46b069953c873404aad4b5&filter=(SCODE=000063)&st=HDDATE&sr=-1&p=1&ps=1000

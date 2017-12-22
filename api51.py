@@ -64,7 +64,7 @@ if __name__ == '__main__':
     api51 = api51()
     # http://stock.api51.cn/kline?candle_mode=0&candle_period=6&data_count=1000&get_type=offset&prod_code=000001.SS&search_direction=1
     d = {
-        'prod_code':'000001.SZ',
+        'prod_code':'GN3568', # '000001.SZ',
         'candle_mode':'0',
         'data_count':'1000',
         'get_type':'offset',

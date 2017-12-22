@@ -153,7 +153,7 @@ class fund_holdings_display(object):
 
             newWb.save(r'temp_data.xls')
 
-    def display_all(self, fund_file='important_fund.txt'):
+    def display_all(self, fund_file='weekly_fund.txt'):
         try:
             with open(fund_file, 'r') as f:
                 code_list = f.read().split('\n')
@@ -173,7 +173,7 @@ class fund_holdings_display(object):
                 os.remove(output_file)
 
             for fund_code in code_list:
-                if not fund_code or re.search(r'^[^\d]+$', fund_code):
+                if not fund_code or re.search(r'[^\d]+', fund_code):
                     print u'空白或标题行，略过'
                     continue
                 print fund_code

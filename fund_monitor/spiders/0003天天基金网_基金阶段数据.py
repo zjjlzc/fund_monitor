@@ -188,3 +188,5 @@ class Spider(scrapy.Spider):
 
 if __name__ == '__main__':
     pass
+
+# 股票代码,股票简称,相关资料,业绩变动,业绩变动幅度,预告,公告日期

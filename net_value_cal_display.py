@@ -841,6 +841,136 @@ class net_value_cal_display(object):
 
         return output_file
 
+    def date_range_display(self):
+        with open('weekly_fund.txt', 'r') as f:
+            code_list = f.read().split('\n')
+
+        date_dict = {
+            u'2017年1月1日至4月12日': {
+                'date1': datetime.datetime(year=datetime.datetime.now().year, month=1, day=1),
+                'date2': datetime.datetime(year=datetime.datetime.now().year, month=4, day=12)
+            },
+            u'2017年4月13日至6月1日': {
+                'date1': datetime.datetime(year=datetime.datetime.now().year, month=4, day=13),
+                'date2': datetime.datetime(year=datetime.datetime.now().year, month=6, day=1)
+            },
+            u'2017年6月2日至10月13日': {
+                'date1': datetime.datetime(year=datetime.datetime.now().year, month=6, day=2),
+                'date2': datetime.datetime(year=datetime.datetime.now().year, month=10, day=13)
+            },
+            u'2017年10月13日至11月17日': {
+                'date1': datetime.datetime(year=datetime.datetime.now().year, month=10, day=13),
+                'date2': datetime.datetime(year=datetime.datetime.now().year, month=11, day=17)
+            },
+            u'2017年11月17日至12月7日': {
+                'date1': datetime.datetime(year=datetime.datetime.now().year, month=11, day=17),
+                'date2': datetime.datetime(year=datetime.datetime.now().year, month=12, day=7)
+            },
+            u'2017年12月8日至12月23日': {
+                'date1': datetime.datetime(year=datetime.datetime.now().year, month=12, day=8),
+                'date2': datetime.datetime(year=datetime.datetime.now().year, month=12, day=23)
+            }
+        }
+
+        sql = """
+        SELECT `crawler_key`,a.`fund_code`, `value_date`,`accumulative_net_value`, b.`fund_name` FROM `eastmoney_daily_data` a
+        LEFT JOIN `fund_info` b ON a.`fund_code` = b.`fund_code`
+        WHERE a.`fund_code` IN (%s)""" % (','.join(['"%s"' %code for code in code_list]))
+        with closing(pymysql.connect('10.10.10.15', 'spider', 'jlspider', 'spider', charset='utf8')) as conn:
+            fund_data = pd.read_sql(sql, conn)
+        print fund_data
+
+        d = {
+            'prod_code': '000300.SS',
+            'candle_mode': '0',
+            'data_count': '1000',
+            'get_type': 'offset',
+            'search_direction': '1',
+            'candle_period': '6',
+        }
+        json_data = api51.connect(user_key, d)
+        hs300 = pd.DataFrame(json_data['data']['candle']['000300.SS'], columns=json_data['data']['candle']['fields'])
+        hs300['min_time'] = pd.to_datetime(hs300['min_time'], format='%Y%m%d')
+        # print 'hs300'
+        # print hs300
+
+        d = {
+            'prod_code': '000016.SH',
+            'candle_mode': '0',
+            'data_count': '1000',
+            'get_type': 'offset',
+            'search_direction': '1',
+            'candle_period': '6',
+        }
+        json_data = api51.connect(user_key, d)
+        sz50 = pd.DataFrame(json_data['data']['candle']['000016.SH'], columns=json_data['data']['candle']['fields'])
+        sz50['min_time'] = pd.to_datetime(sz50['min_time'], format='%Y%m%d')
+
+        d = {
+            'prod_code': '399905.SZ',
+            'candle_mode': '0',
+            'data_count': '1000',
+            'get_type': 'offset',
+            'search_direction': '1',
+            'candle_period': '6',
+        }
+        json_data = api51.connect(user_key, d)
+        zz500 = pd.DataFrame(json_data['data']['candle']['399905.SZ'], columns=json_data['data']['candle']['fields'])
+        zz500['min_time'] = pd.to_datetime(zz500['min_time'], format='%Y%m%d')
+
+        file_name = u'区间.xlsx'
+        if os.path.exists(file_name):
+            os.remove(file_name)
+            wb = xlwt.Workbook()
+            wb.add_sheet('sheet1')
+            wb.save(file_name)
+
+        writer = pd.ExcelWriter(file_name)
+        for key in date_dict:
+            df = pd.DataFrame([])
+            date1 = date_dict[key]['date1']
+            date2 = date_dict[key]['date2']
+
+            func = lambda date1, date2: calculation.earnings_cal(u'沪深300', hs300, date1=date1, date2=date2,
+                                                                 date_col='min_time', value_col='close_px', data_type='fund')
+            df.loc[u'沪深300', u'收益率'] = func(date1, date2)[u'收益率']
+            df.loc[u'沪深300', u'最大回撤'] = func(date1, date2)[u'最大回撤']
+
+            func = lambda date1, date2: calculation.earnings_cal(u'上证50', sz50, date1=date1, date2=date2,
+                                                                 date_col='min_time', value_col='close_px', data_type='fund')
+            df.loc[u'上证50', u'收益率'] = func(date1, date2)[u'收益率']
+            df.loc[u'上证50', u'最大回撤'] = func(date1, date2)[u'最大回撤']
+
+            func = lambda date1, date2: calculation.earnings_cal(u'中证500', zz500, date1=date1, date2=date2,
+                                                                 date_col='min_time', value_col='close_px', data_type='fund')
+            df.loc[u'中证500', u'收益率'] = func(date1, date2)[u'收益率']
+            df.loc[u'中证500', u'最大回撤'] = func(date1, date2)[u'最大回撤']
+
+            for fund_code in code_list:
+                print 'fund_code = ', fund_code
+                try:
+                    if not fund_code:
+                        df.loc[fund_code, :] = None
+                        print u'空白行，略过'
+                        continue
+
+                    if re.search(r'[^\d]+', fund_code):
+                        df.loc[fund_code.decode('gbk'), :] = ''
+                        continue
+                    data = fund_data[fund_data['fund_code'] == fund_code].copy()
+                    func = lambda date1,date2: calculation.earnings_cal(fund_code, data, date1=date1, date2=date2,
+                                                                 date_col='value_date', value_col='accumulative_net_value', data_type='fund')
+                    df.loc[fund_code, u'基金名称'] = data['fund_name'].iloc[0]
+                    df.loc[fund_code, u'收益率'] = func(date1, date2)[u'收益率']
+                    df.loc[fund_code, u'最大回撤'] = func(date1, date2)[u'最大回撤']
+                    print df
+                    df.to_excel(writer, key)
+
+                except:
+                    print traceback.format_exc()
+        writer.save()
+
+
 
     def main(self):
         if self.method == 'weekly':
@@ -855,8 +985,8 @@ if __name__ == '__main__':
         net_value_cal_display = net_value_cal_display(method=sys.argv[1])
     else:
         net_value_cal_display = net_value_cal_display()
-    net_value_cal_display = net_value_cal_display.weekly_report()
-    # net_value_cal_display.index_calculation()
+    # net_value_cal_display = net_value_cal_display.weekly_report()
+    net_value_cal_display.date_range_display()
 
 # http://dcfm.eastmoney.com//em_mutisvcexpandinterface/api/js/get?type=HSGTHDSTA&token=70f12f2f4f091e459a279469fe49eca5&filter=(SCODE=%27000063%27)&st=HDDATE&sr=-1&p=1&ps=50&js=var%20ANuhNwTP={pages:(tp),data:(x)}&rt=50437829
 # http://dcfm.eastmoney.com//em_mutisvcexpandinterface/api/js/get?type=HSGTHDSTA&token=1942f5da9b46b069953c873404aad4b5&filter=(SCODE=000063)&st=HDDATE&sr=-1&p=1&ps=1000

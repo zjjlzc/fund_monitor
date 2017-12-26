@@ -67,7 +67,7 @@ class Spider(scrapy.Spider):
                 print df
                 df_sum = df_sum.append(df,ignore_index=True)
                 df_sum.to_excel('tree_data.xlsx')
-                time.sleep(1)
+                time.sleep(10)
         except:
             log_obj.error("%s中无法解析\n原因：%s" %(self.name, traceback.format_exc()))
 

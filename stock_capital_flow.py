@@ -9,10 +9,15 @@
 """
 import sys
 import os
+import traceback
+
 import pandas as pd
 import numpy as np
 import time
 import chardet
+import xlwt
+from contextlib import closing
+import pymysql
 
 sys.path.append(sys.prefix + "\\Lib\\MyWheels")
 
@@ -29,14 +34,15 @@ requests_manager = requests_manager.requests_manager()
 import xls_manager
 xls_manager = xls_manager.xls_manager()
 print sys.getdefaultencoding()
+token = '1942f5da9b46b069953c873404aad4b5'
 
 class stock_capital_flow(object):
 
     def __init__(self):
         pass
 
-    def stock_flow(self):
-        token = '1942f5da9b46b069953c873404aad4b5'
+    def stock_flow0(self):
+        global token
         with open('stock_list.txt', 'r') as f:
             code_list = f.read().split('\n')
         print code_list
@@ -84,6 +90,69 @@ class stock_capital_flow(object):
             # else:
             #     print stock_code, u'无数据'
             #     print data_str
+
+    def stock_flow(self):
+        global token
+        with open('stock_list.txt','r') as f:
+            stock_list = f.read().split('\n')
+
+        sql = """
+        SELECT * FROM `stock_belonging` WHERE `stock_code` in (%s)
+        """ %(','.join('"%s"' %s for s in stock_list))
+        with closing(pymysql.connect('10.10.10.15', 'spider', 'jlspider', 'spider', charset='utf8')) as conn:
+            stock_info = pd.read_sql(sql, conn)
+
+        file_name = u'股票资金流.xlsx'
+        if os.path.exists(file_name):
+            os.remove(file_name)
+            wb = xlwt.Workbook()
+            wb.add_sheet('sheet1')
+            wb.save(file_name)
+
+        writer = pd.ExcelWriter(file_name)
+
+        for stock_code in stock_list:
+            try:
+                stock_type = stock_info[stock_info['stock_code']==stock_code]['stock_type'].iloc[0]
+                stock_name = stock_info[stock_info['stock_code'] == stock_code]['stock_name'].iloc[0]
+                if stock_type == 'SH':
+                    stock_type = 1
+                elif stock_type == 'SZ':
+                    stock_type = 2
+                else:
+                    stock_type = 3
+                url = "http://ff.eastmoney.com//EM_CapitalFlowInterface/api/js?type=hff&rtntype=2&check=TMLBMSPROCR&acces_token=%s&id=%s%s" % (token, stock_code,stock_type)
+                data_str = requests_manager.get_html(url)
+                l = eval(data_str)
+                data = [s.split(',') for s in l]
+
+                df = pd.DataFrame(data)
+                if df.empty:
+                    print stock_code, u'出错'
+                    print df
+                    print url
+                df.columns = [u'日期',u'主力净流入净额',u'主力净流入净占比',
+                              u'超大单净流入净额',u'超大单净流入净占比',
+                              u'大单净流入净额',u'大单净流入净占比',
+                              u'中单净流入净额',u'中单净流入净占比',
+                              u'小单净流入净额',u'小单净流入净占比',
+                              u'收盘价',u'涨跌幅']
+                self.calculation(df).to_excel(writer, stock_name, index=None)
+                time.sleep(1)
+
+            except:
+                print url
+                print traceback.format_exc()
+
+        writer.save()
+
+    def calculation(self,df):
+        for s in [u'主力净流入净额', u'中单净流入净额', u'小单净流入净额']:
+            df[s + u'5日累计'] = df[s].rolling(window=5).sum()
+            df[s + u'10日累计'] = df[s].rolling(window=10).sum()
+            df[s + u'20日累计'] = df[s].rolling(window=20).sum()
+
+        return df
 
 
 

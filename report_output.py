@@ -49,7 +49,6 @@ class report_output(object):
 
         writer = pd.ExcelWriter(file_name)
 
-
         net_value_cal_display = self.net_value_cal_display.daily_report(fund_file)
 
         df = pd.read_excel(net_value_cal_display, sheet_name=0)

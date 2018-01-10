@@ -112,8 +112,9 @@ class stock_capital_flow(object):
         writer = pd.ExcelWriter(file_name)
 
         for stock_code in stock_list:
+            print "stock_capital_flow =>", stock_code
             try:
-                stock_type = stock_info[stock_info['stock_code']==stock_code]['stock_type'].iloc[0]
+                stock_type = stock_info[stock_info['stock_code'] == stock_code]['stock_type'].iloc[0]
                 stock_name = stock_info[stock_info['stock_code'] == stock_code]['stock_name'].iloc[0]
                 if stock_type == 'SH':
                     stock_type = 1
@@ -137,9 +138,22 @@ class stock_capital_flow(object):
                               u'中单净流入净额',u'中单净流入净占比',
                               u'小单净流入净额',u'小单净流入净占比',
                               u'收盘价',u'涨跌幅']
-                self.calculation(df).to_excel(writer, stock_name, index=None)
-                time.sleep(1)
+                df = self.calculation(df)
+                df = df.reindex(columns =[u'日期',u'收盘价',u'涨跌幅',u'主力净流入净额',u'主力净流入净额3日累计',u'主力净流入净额5日累计',u'主力净流入净额10日累计',
+                                 u'主力净流入净额20日累计',u'主力净流入净占比',u'1',u'2',u'超大单净流入净额',u'超大单净流入净占比',u'大单净流入净额',u'大单净流入净占比',
+                                 u'中单净流入净额',u'中单净流入净占比',u'小单净流入净额',u'小单净流入净占比',u'中单净流入净额3日累计',u'中单净流入净额5日累计',
+                                 u'中单净流入净额10日累计',u'中单净流入净额20日累计',u'小单净流入净额3日累计',u'小单净流入净额5日累计',u'小单净流入净额10日累计',
+                                 u'小单净流入净额20日累计'])
+                df[u'收盘价'] = df[u'收盘价'].astype(np.float64)
+                df[u'主力净流入净额'] = df[u'主力净流入净额'].astype(np.float64).round(0)
+                df[u'主力净流入净额3日累计'] = df[u'主力净流入净额3日累计'].round(0)
+                df[u'主力净流入净额5日累计'] = df[u'主力净流入净额5日累计'].round(0)
+                df[u'主力净流入净额10日累计'] = df[u'主力净流入净额10日累计'].round(0)
+                df[u'主力净流入净额20日累计'] = df[u'主力净流入净额20日累计'].round(0)
 
+                df.to_excel(writer, stock_name, index=None) #stock_name
+                df.to_csv(stock_name+'.csv', index=None)
+                time.sleep(1)
             except:
                 print url
                 print traceback.format_exc()
@@ -148,6 +162,7 @@ class stock_capital_flow(object):
 
     def calculation(self,df):
         for s in [u'主力净流入净额', u'中单净流入净额', u'小单净流入净额']:
+            df[s + u'3日累计'] = df[s].rolling(window=3).sum()
             df[s + u'5日累计'] = df[s].rolling(window=5).sum()
             df[s + u'10日累计'] = df[s].rolling(window=10).sum()
             df[s + u'20日累计'] = df[s].rolling(window=20).sum()

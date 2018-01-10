@@ -16,6 +16,10 @@ class FundMonitorItem(scrapy.Item):
     # name = scrapy.Field()
     #title = scrapy.Field()
 
+    cookies = scrapy.Field()
+    data = scrapy.Field()
+    title = scrapy.Field()
+
     fund_code = scrapy.Field()
     fund_name = scrapy.Field()
     url = scrapy.Field()

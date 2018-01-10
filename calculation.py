@@ -38,7 +38,7 @@ class calculation(object):
         """
         if df.empty:
             print 'earnings_cal=>', fund_code, u'数据为空'
-            return None
+            return pd.DataFrame([])
 
         if kwarg:
             date_col = kwarg['date_col']
@@ -50,7 +50,7 @@ class calculation(object):
         date2 = kwarg['date2'] if 'date2' in kwarg else max(pd.to_datetime(df.loc[:, date_col]))
         if date1 == date2:
             print u'earnings_cal=>输入日期间隔为0'
-            return None
+            return pd.DataFrame([])
 
         print u"正在准备计算%s的从%s到%s的数据" % (fund_code, date1, date2)
         #print date_col, value_col, date1, date2
@@ -70,7 +70,7 @@ class calculation(object):
         df = df[df[date_col].between(date1, date2)].copy()
         if df.empty:
             print u'earnings_cal =>时间段内数据为空'
-            return None
+            return pd.DataFrame([])
 
 
         df = df.sort_values([date_col, ])  # 按时间排序

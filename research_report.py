@@ -17,5 +17,7 @@ sys.setdefaultencoding('utf8')
 
 
 if __name__ == '__main__':
-    os.system("scrapy crawl 0001")
-    # os.system("scrapy crawl 0007")
+    file_path = os.getcwd() + u'/研报/'
+    if os.path.exists(file_path):
+        shutil.rmtree(file_path)
+    os.system("scrapy crawl 0012")

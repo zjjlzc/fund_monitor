@@ -19,6 +19,7 @@ import time
 from contextlib import closing
 import pymysql
 import re
+import dateutil.relativedelta
 
 import xlrd
 import xlwt
@@ -83,16 +84,20 @@ class net_value_cal_display(object):
                 'date2': date_today
             },
             u'前月': {
-                'date1': datetime.datetime(year=date_today.year, month=date_today.month - 1, day=1),
-                'date2': datetime.datetime(year=date_today.year, month=date_today.month - 1,
-                                           day=calendar.monthrange(date_today.year, month=date_today.month - 1)[1])
+                'date1': (date_today - dateutil.relativedelta.relativedelta(months=1)).replace(day=1),
+                'date2': (date_today - dateutil.relativedelta.relativedelta(months=1)).replace(
+                                                    day=calendar.monthrange((date_today - dateutil.relativedelta.relativedelta(months=1)).year,
+                                                                            month=((date_today - dateutil.relativedelta.relativedelta(months=1)).month))[1]
+                )
             },
             u'本季': {
                 'date1': datetime.datetime(year=date_today.year, month=int((date_today.month - 1) / 3) * 3 + 1, day=1),
                 'date2': date_today
             }
-
         }
+        print 'self.daily_report_date'
+        for key in self.daily_report_date:
+            print key, self.daily_report_date[key]
 
     def get_data(self, code, date1, date2):
         date1 = date1.strftime('%Y-%m-%d')
@@ -348,40 +353,40 @@ class net_value_cal_display(object):
 
                 d = {
                     u'2017年9月30日至11月22日':{
-                        'date1': datetime.datetime(year=last_friday.year, month=9, day=30),
-                        'date2': datetime.datetime(year=last_friday.year, month=11, day=22)
+                        'date1': datetime.datetime(year=2017, month=9, day=30),
+                        'date2': datetime.datetime(year=2017, month=11, day=22)
                     },
                     u'2017年11月23日至12月15日':{
-                        'date1': datetime.datetime(year=last_friday.year, month=11, day=23),
-                        'date2': datetime.datetime(year=last_friday.year, month=12, day=15)
+                        'date1': datetime.datetime(year=2017, month=11, day=23),
+                        'date2': datetime.datetime(year=2017, month=12, day=15)
                     },
                     u'2017年1月1日至4月12日':{
-                        'date1': datetime.datetime(year=last_friday.year, month=1, day=1),
-                        'date2': datetime.datetime(year=last_friday.year, month=4, day=12)
+                        'date1': datetime.datetime(year=2017, month=1, day=1),
+                        'date2': datetime.datetime(year=2017, month=4, day=12)
                     },
                     u'2017年4月13日至5月10日': {
-                        'date1': datetime.datetime(year=last_friday.year, month=4, day=13),
-                        'date2': datetime.datetime(year=last_friday.year, month=5, day=10)
+                        'date1': datetime.datetime(year=2017, month=4, day=13),
+                        'date2': datetime.datetime(year=2017, month=5, day=10)
                     },
                     u'2017年4月13日至6月1日': {
-                        'date1': datetime.datetime(year=last_friday.year, month=4, day=13),
-                        'date2': datetime.datetime(year=last_friday.year, month=6, day=1)
+                        'date1': datetime.datetime(year=2017, month=4, day=13),
+                        'date2': datetime.datetime(year=2017, month=6, day=1)
                     },
                     u'2017年6月2日至9月12日': {
-                        'date1': datetime.datetime(year=last_friday.year, month=6, day=2),
-                        'date2': datetime.datetime(year=last_friday.year, month=9, day=12)
+                        'date1': datetime.datetime(year=2017, month=6, day=2),
+                        'date2': datetime.datetime(year=2017, month=9, day=12)
                     },
                     u'2017年5月12日至11月22日': {
-                        'date1': datetime.datetime(year=last_friday.year, month=5, day=12),
-                        'date2': datetime.datetime(year=last_friday.year, month=11, day=22)
+                        'date1': datetime.datetime(year=2017, month=5, day=12),
+                        'date2': datetime.datetime(year=2017, month=11, day=22)
                     },
                     u'2017年9月13日至12月15日': {
-                        'date1': datetime.datetime(year=last_friday.year, month=9, day=13),
-                        'date2': datetime.datetime(year=last_friday.year, month=12, day=15)
+                        'date1': datetime.datetime(year=2017, month=9, day=13),
+                        'date2': datetime.datetime(year=2017, month=12, day=15)
                     },
                     u'2017年11月14日至12月15日': {
-                        'date1': datetime.datetime(year=last_friday.year, month=11, day=14),
-                        'date2': datetime.datetime(year=last_friday.year, month=12, day=15)
+                        'date1': datetime.datetime(year=2017, month=11, day=14),
+                        'date2': datetime.datetime(year=2017, month=12, day=15)
                     },
                     u'近一周': {
                         'date1': last_friday-datetime.timedelta(6),
@@ -847,28 +852,28 @@ class net_value_cal_display(object):
 
         date_dict = {
             u'2017年1月1日至4月12日': {
-                'date1': datetime.datetime(year=datetime.datetime.now().year, month=1, day=1),
-                'date2': datetime.datetime(year=datetime.datetime.now().year, month=4, day=12)
+                'date1': datetime.datetime(year=2017, month=1, day=1),
+                'date2': datetime.datetime(year=2017, month=4, day=12)
             },
             u'2017年4月13日至6月1日': {
-                'date1': datetime.datetime(year=datetime.datetime.now().year, month=4, day=13),
-                'date2': datetime.datetime(year=datetime.datetime.now().year, month=6, day=1)
+                'date1': datetime.datetime(year=2017, month=4, day=13),
+                'date2': datetime.datetime(year=2017, month=6, day=1)
             },
             u'2017年6月2日至10月13日': {
-                'date1': datetime.datetime(year=datetime.datetime.now().year, month=6, day=2),
-                'date2': datetime.datetime(year=datetime.datetime.now().year, month=10, day=13)
+                'date1': datetime.datetime(year=2017, month=6, day=2),
+                'date2': datetime.datetime(year=2017, month=10, day=13)
             },
             u'2017年10月13日至11月17日': {
-                'date1': datetime.datetime(year=datetime.datetime.now().year, month=10, day=13),
-                'date2': datetime.datetime(year=datetime.datetime.now().year, month=11, day=17)
+                'date1': datetime.datetime(year=2017, month=10, day=13),
+                'date2': datetime.datetime(year=2017, month=11, day=17)
             },
             u'2017年11月17日至12月7日': {
-                'date1': datetime.datetime(year=datetime.datetime.now().year, month=11, day=17),
-                'date2': datetime.datetime(year=datetime.datetime.now().year, month=12, day=7)
+                'date1': datetime.datetime(year=2017, month=11, day=17),
+                'date2': datetime.datetime(year=2017, month=12, day=7)
             },
-            u'2017年12月8日至12月23日': {
-                'date1': datetime.datetime(year=datetime.datetime.now().year, month=12, day=8),
-                'date2': datetime.datetime(year=datetime.datetime.now().year, month=12, day=23)
+            u'2017年12月8日至12月29日': {
+                'date1': datetime.datetime(year=2017, month=12, day=8),
+                'date2': datetime.datetime(year=2017, month=12, day=30)
             }
         }
 
@@ -970,6 +975,250 @@ class net_value_cal_display(object):
                     print traceback.format_exc()
         writer.save()
 
+    def special_fund(self):
+        with open('special_fund.json', 'r') as f:
+            special_fund = json.load(f, encoding='utf_8_sig')
+
+        d = {
+            'prod_code': '000300.SS',
+            'candle_mode': '0',
+            'data_count': '1000',
+            'get_type': 'offset',
+            'search_direction': '1',
+            'candle_period': '6',
+        }
+        json_data = api51.connect(user_key, d)
+        hs300 = pd.DataFrame(json_data['data']['candle']['000300.SS'], columns=json_data['data']['candle']['fields'])
+        hs300['min_time'] = pd.to_datetime(hs300['min_time'], format='%Y%m%d')
+        # print 'hs300'
+        # print hs300
+
+        d = {
+            'prod_code': '000016.SH',
+            'candle_mode': '0',
+            'data_count': '1000',
+            'get_type': 'offset',
+            'search_direction': '1',
+            'candle_period': '6',
+        }
+        json_data = api51.connect(user_key, d)
+        sz50 = pd.DataFrame(json_data['data']['candle']['000016.SH'], columns=json_data['data']['candle']['fields'])
+        sz50['min_time'] = pd.to_datetime(sz50['min_time'], format='%Y%m%d')
+
+        d = {
+            'prod_code': '399905.SZ',
+            'candle_mode': '0',
+            'data_count': '1000',
+            'get_type': 'offset',
+            'search_direction': '1',
+            'candle_period': '6',
+        }
+        json_data = api51.connect(user_key, d)
+        zz500 = pd.DataFrame(json_data['data']['candle']['399905.SZ'], columns=json_data['data']['candle']['fields'])
+        zz500['min_time'] = pd.to_datetime(zz500['min_time'], format='%Y%m%d')
+
+        index_data ={
+            u'沪深300': hs300,
+            u'上证50': sz50,
+            u'中证500': zz500
+        }
+
+        sql = """
+        SELECT `fund_code`, `fund_name` FROM `fund_info`
+        """
+        with closing(pymysql.connect('10.10.10.15', 'spider', 'jlspider', 'spider', charset='utf8')) as conn:
+            fund_name_df = pd.read_sql(sql, conn)
+        fund_name_d = fund_name_df.set_index('fund_code').to_dict()['fund_name']
+
+        title = [
+            u"基金名称",
+            u"拟合净值收益率",
+            u"实际净值收益率",
+            u"收益率比较",
+            u"拟合净值最大回撤",
+            u"实际净值最大回撤",
+            u"拟合净值收益回撤比",
+            u"实际净值收益回撤比",
+        ]
+        table_df = pd.DataFrame([], columns=title)
+        output_data = pd.DataFrame([])
+        for fund_info in special_fund:
+            print fund_info
+            date1 = datetime.datetime.strptime(fund_info['date1'],"%Y.%m.%d")
+            date2 = datetime.datetime.strptime(fund_info['date2'],"%Y.%m.%d")
+            date_str = date1.strftime("%Y.%m.%d") + "-" + date2.strftime("%m.%d")
+            # print date_str
+            # print table_df
+            table_df = table_df.append(pd.Series([]), ignore_index=True)
+            table_df.iloc[table_df.shape[0]-1, 0] = date_str
+            table_df.iloc[table_df.shape[0]-1, 1] = u'收益率'
+            table_df.iloc[table_df.shape[0]-1, 2] = u'最大回撤'
+            table_df.iloc[table_df.shape[0]-1, 3] = u'收益回撤比'
+
+            for s in [u'沪深300', u'上证50', u'中证500']:
+                table_df = table_df.append(pd.Series([]), ignore_index=True)
+                table_df.iloc[table_df.shape[0] - 1, 0] = s
+                func = lambda date1, date2: calculation.earnings_cal(s, index_data[s], date1=date1, date2=date2,
+                                                                     date_col='min_time', value_col='close_px', data_type='fund')
+                table_df.iloc[table_df.shape[0] - 1, 1] = func(date1, date2)[u'收益率']
+                table_df.iloc[table_df.shape[0] - 1, 2] = func(date1, date2)[u'最大回撤']
+                table_df.iloc[table_df.shape[0] - 1, 3] = func(date1, date2)[u'收益回撤比']
+
+            cal_fund_df = pd.DataFrame([])
+            cut_off_date_list = []
+            for fund_type in fund_info['fund']:
+                for fund_code in fund_info['fund'][fund_type]:
+                    print u"正在运行：", fund_code
+                    sql = """
+                    SELECT `fund_code`, `cut_off_date`, `net_value_ratio`, `stock_code` FROM `fund_holdings`
+                    WHERE `fund_code` = %s
+                    ORDER BY `cut_off_date`
+                    """ %fund_code
+                    with closing(pymysql.connect('10.10.10.15', 'spider', 'jlspider', 'spider', charset='utf8')) as conn:
+                        fund_holding = pd.read_sql(sql, conn)
+
+                    if fund_holding.empty:
+                        continue
+
+                    fund_holding['cut_off_date'] = pd.to_datetime(fund_holding['cut_off_date'])
+                    # fund_holding
+                    if fund_holding[fund_holding['cut_off_date'].between(date1, date2)].empty and not fund_holding[fund_holding['cut_off_date'] < date1].empty:
+                        frist_date = fund_holding[fund_holding['cut_off_date'] < date1]['cut_off_date'].iloc[-1]
+                    else:
+                        frist_date = fund_holding[fund_holding['cut_off_date'].between(date1, date2)]['cut_off_date'].iloc[0]
+
+                    if date1 < frist_date and not fund_holding[fund_holding['cut_off_date'] < date1].empty:
+                        frist_date = fund_holding[fund_holding['cut_off_date'] < date1]['cut_off_date'].iloc[-1]
+                    fund_holding = fund_holding[fund_holding['cut_off_date'].between(frist_date, date2)]
+
+                    # 获取股票数据
+                    stock_data = {}
+                    for stock_code in set(fund_holding['stock_code'].tolist()):
+                        sql = 'SELECT `stock_code`, `stock_type` FROM `stock_belonging` WHERE `stock_code`=\'%s\'' % stock_code
+                        with closing(pymysql.connect('10.10.10.15', 'spider', 'jlspider', 'spider', charset='utf8')) as conn:
+                            stock_belonging = pd.read_sql(sql, conn)
+                        if stock_belonging.empty:
+                            continue
+                        stock_type = stock_belonging['stock_type'].iat[0]
+
+                        d = {
+                            'prod_code': stock_code + '.' + stock_type,
+                            'candle_mode': '0',
+                            'data_count': '1000',
+                            'get_type': 'offset',
+                            'search_direction': '1',
+                            'candle_period': '6',
+                        }
+                        stock_price = api51.connect(user_key, d)[u'data'][u'candle']
+                        df = pd.DataFrame(stock_price[stock_code + '.' + stock_type], columns=stock_price['fields'])
+                        df['min_time'] = pd.to_datetime(df['min_time'], format="%Y%m%d")
+                        df = df.set_index('min_time')
+                        stock_data[stock_code] = df['close_px']
+                        # print df
+
+                    stock_data = pd.DataFrame(stock_data)
+                    stock_data = stock_data.fillna(method='ffill').fillna(0)
+                    stock_data = stock_data.reset_index()
+                    stock_data = stock_data[stock_data['min_time'].between(date1, date2)]
+                    stock_data = stock_data.set_index('min_time')
+
+                    fund_holding_d = {}
+                    for date in fund_holding['cut_off_date'].drop_duplicates().tolist():
+                        df = fund_holding[fund_holding['cut_off_date'] == date].copy()
+                        df['net_value_ratio'] = df['net_value_ratio'].apply(lambda s: re.search(r'\d+\.*\d*', s).group() if re.search(r'\d+\.*\d*', s) else 0).astype(np.float64)
+                        df = df.sort_values(['net_value_ratio',], ascending=False)
+
+                        df = df.iloc[:10,:].copy()
+                        # print df
+                        df['net_value_ratio'] = df['net_value_ratio'].apply(lambda num: num/df['net_value_ratio'].sum())
+                        # print df
+                        df = df.set_index('stock_code')
+                        fund_holding_d[date] = df['net_value_ratio']
+
+                    for date in stock_data.index:
+                        ser = stock_data.loc[date,:]
+                        # print date
+                        # print 'cut_off_date month:', int((date.month-1)/3) * 3 + 1 , type(int(date.month/3) * 3 + 1)
+                        cut_off_date = datetime.datetime(year=2017, month=int((date.month-1)/3) * 3 + 1, day=1) - datetime.timedelta(days=1)
+                        if cut_off_date in fund_holding_d:
+                            cut_off_date_list.append(cut_off_date)
+                            stock_data.loc[date, u'拟合净值'] = (ser * fund_holding_d[cut_off_date]).sum()
+
+                    base_price = stock_data[u'拟合净值'].iloc[0]
+                    stock_data[u'拟合净值'] = stock_data[u'拟合净值'].apply(lambda num: num / base_price)
+
+                    ser = pd.Series(stock_data[u'拟合净值'], name=fund_code)
+                    if not ser.empty:
+                        cal_fund_df = cal_fund_df.append(ser)
+                        cal_fund_df = cal_fund_df.drop_duplicates()
+
+
+
+            # 修正数据
+            df = cal_fund_df.T
+            # df = pd.read_excel('temp.xlsx')
+            df.to_excel('temp.xlsx')
+            df = df.sort_index()
+            df = df[df.index.isin(date_ser)]
+            cut_off_date_list.extend([
+                datetime.datetime(year=1950,month=2,day=10),
+                datetime.datetime(year=2100,month=1,day=1),
+                datetime.datetime(year=2017, month=3, day=31)])
+            cut_off_date_list = sorted(list(set(cut_off_date_list)))
+            print cut_off_date_list
+            base_price = 1
+            cal_fund_df = pd.DataFrame([])
+            for i in range(len(cut_off_date_list)-1):
+                df0 = df[cut_off_date_list[i]+datetime.timedelta(days=1):cut_off_date_list[i+1]].copy()
+                if df0.empty:
+                    continue
+                rate = base_price / df0.iloc[0,:]
+                # print 'rate', rate
+                # print df0
+                df0 = df0 * rate
+                base_price = df0.iloc[-1,:]
+                cal_fund_df = cal_fund_df.append(df0)
+            # print cal_fund_df
+
+            cal_fund_df = cal_fund_df.T
+            output_data = output_data.append(cal_fund_df)
+            # 计算收益率
+            fund_df = pd.DataFrame([])
+            for fund_code in cal_fund_df.index:
+                sql = """
+                SELECT `fund_code`, `value_date`, `accumulative_net_value` FROM `eastmoney_daily_data` WHERE `fund_code` = "%s"
+                """ %fund_code
+                with closing(pymysql.connect('10.10.10.15', 'spider', 'jlspider', 'spider', charset='utf8')) as conn:
+                    fund_value = pd.read_sql(sql, conn)
+                func1 = lambda date1, date2: calculation.earnings_cal(fund_code, fund_value, date1=date1, date2=date2,
+                                                                     date_col='value_date', value_col='accumulative_net_value', data_type='fund')
+                ser1 = func1(date1, date2)
+
+                fund_value = pd.DataFrame(cal_fund_df.loc[fund_code,:])
+                fund_value['min_time'] = fund_value.index
+                func2 = lambda date1, date2: calculation.earnings_cal(fund_code, fund_value, date1=date1, date2=date2,
+                                                                     date_col='min_time', value_col=fund_code, data_type='fund')
+                ser2 = func2(date1, date2)
+
+                fund_df.loc[fund_code, u"拟合净值收益率"] = ser2[u'收益率'] if not ser2.empty else None
+                fund_df.loc[fund_code, u"实际净值收益率"] = ser1[u'收益率'] if not ser1.empty else None
+                fund_df.loc[fund_code, u"收益率比较"] = fund_df.loc[fund_code, u"拟合净值收益率"] - fund_df.loc[fund_code, u"实际净值收益率"]
+
+                fund_df.loc[fund_code, u"拟合净值最大回撤"] = ser2[u'最大回撤'] if not ser2.empty else None
+                fund_df.loc[fund_code, u"实际净值最大回撤"] = ser1[u'最大回撤'] if not ser1.empty else None
+
+                fund_df.loc[fund_code, u"拟合净值收益回撤比"] = ser2[u'收益回撤比'] if not ser2.empty else None
+                fund_df.loc[fund_code, u"实际净值收益回撤比"] = ser1[u'收益回撤比'] if not ser1.empty else None
+
+
+            fund_df.index.name = u"基金名称"
+            fund_df = fund_df.reset_index()
+            table_df = table_df.append(fund_df, ignore_index=True)
+            print fund_df
+            print table_df
+            table_df[u"基金名称"] = table_df[u"基金名称"].replace(fund_name_d)
+            table_df.to_excel(u'special_fund.xlsx', index=None)
+            output_data.T.to_excel(u'special_fund计算过程.xlsx')
 
 
     def main(self):
@@ -985,8 +1234,9 @@ if __name__ == '__main__':
         net_value_cal_display = net_value_cal_display(method=sys.argv[1])
     else:
         net_value_cal_display = net_value_cal_display()
-    # net_value_cal_display = net_value_cal_display.weekly_report()
-    net_value_cal_display.date_range_display()
+    net_value_cal_display = net_value_cal_display.weekly_report()
+    # net_value_cal_display.date_range_display()
+    # net_value_cal_display.special_fund()
 
 # http://dcfm.eastmoney.com//em_mutisvcexpandinterface/api/js/get?type=HSGTHDSTA&token=70f12f2f4f091e459a279469fe49eca5&filter=(SCODE=%27000063%27)&st=HDDATE&sr=-1&p=1&ps=50&js=var%20ANuhNwTP={pages:(tp),data:(x)}&rt=50437829
 # http://dcfm.eastmoney.com//em_mutisvcexpandinterface/api/js/get?type=HSGTHDSTA&token=1942f5da9b46b069953c873404aad4b5&filter=(SCODE=000063)&st=HDDATE&sr=-1&p=1&ps=1000

@@ -52,7 +52,7 @@ url_dict = {
     "gh_294e097afc75":"中信研究"
 }
 
-end_date = datetime.datetime.now() - datetime.timedelta(days=1)# datetime.datetime(year=2018, month=1, day=10)
+end_date = datetime.datetime.now()# - datetime.timedelta(days=1)# datetime.datetime(year=2018, month=1, day=10)
 file_path = u"%s\%s微信文章.xlsx" %(os.getcwd(), end_date.strftime('%Y%m%d'))
 # if os.path.exists(file_path):
 #     os.remove(file_path)
@@ -89,6 +89,9 @@ class Spider(scrapy.Spider):
             bs_obj = bs4.BeautifulSoup(driver.page_source, 'html.parser')
             while bs_obj.find('div', class_="weui_cell weui_vcode verifycode"):
                 driver.get_screenshot_as_file('catlog.png')
+                img_url = 'http://mp.weixin.qq.com' + bs_obj.find('img', id="verify_img").get('src')
+                requests_manager.get_file(img_url, 'verify_img.png')
+
                 verifycode = raw_input("输入验证码:")
                 driver.find_element_by_class_name('weui_input frm_input').send_key(verifycode) # weui_btn weui_btn_primary btn
                 driver.find_element_by_class_name('weui_btn_primary').click()

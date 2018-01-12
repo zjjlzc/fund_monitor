@@ -42,10 +42,6 @@ import set_log  # log_obj.debug(文本)  "\x1B[1;32;41m (文本)\x1B[0m"
 log_obj = set_log.Logger(log_path, set_log.logging.WARNING, set_log.logging.DEBUG)
 log_obj.cleanup(log_path, if_cleanup=True) # 是否需要在每次运行程序前清空Log文件
 
-with open(u'股票池结构.json', 'r') as f:
-    stock_dict = json.load(f)
-
-stock_list = stock_dict.keys()
 
 file_path = os.getcwd() + u'/研报/'
 # if os.path.exists(file_path):
@@ -56,9 +52,22 @@ file_path = os.getcwd() + u'/研报/'
 class Spider(scrapy.Spider):
     name = "0012"
 
-    def start_requests(self):
+    def __init__(self, file_name, date1=(datetime.datetime.now()-datetime.timedelta(days=1)).strftime('%Y-%m-%d'),
+                                  date2=(datetime.datetime.now()-datetime.timedelta(days=1)).strftime('%Y-%m-%d')):
+        self.date1 = datetime.datetime.strptime(date1, '%Y-%m-%d').replace(hour=0,minute=0,second=0,microsecond=0)
+        self.date2 = datetime.datetime.strptime(date2, '%Y-%m-%d').replace(hour=23,minute=59,second=59,microsecond=0)
+        # if self.date1 == self.date2
+        print 'self.date1', self.date1
+        print 'self.date2', self.date2
 
-        url = 'http://datainterface.eastmoney.com//EM_DataCenter/js.aspx?type=SR&sty=GGSR&ps=3000&p=1&mkt=0&stat=0&cmd=2&code=&rt=50504751'
+        with open(file_name, 'r') as f:
+            self.stock_dict = json.load(f)
+
+        self.stock_list = self.stock_dict.keys()
+        print u'使用的股票池为:', file_name
+
+    def start_requests(self):
+        url = 'http://datainterface.eastmoney.com//EM_DataCenter/js.aspx?type=SR&sty=GGSR&ps=8000&p=1&mkt=0&stat=0&cmd=2&code=&rt=50504751'
         yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response):
@@ -69,13 +78,11 @@ class Spider(scrapy.Spider):
             df = pd.DataFrame(data)
             df['datetime'] = pd.to_datetime(df['datetime'])
 
-            date1 = datetime.datetime(year=2017, month=10, day=1)# date
-            date2 = datetime.datetime.now() # date+datetime.timedelta(days=1)
-            df = df[df['datetime'].between(date1, date2)]
             # print df
+            df = df[df['datetime'].between(self.date1, self.date2)]
+            df.to_excel('json_data.xlsx')
 
-            global stock_list
-            df = df[df['secuFullCode'].apply(lambda s:s.split('.')[0]).isin(stock_list)]
+            df = df[df['secuFullCode'].apply(lambda s:s.split('.')[0]).isin(self.stock_list)]
 
             for i in range(df.shape[0]):
                 item = fund_monitor.items.FundMonitorItem()
@@ -94,7 +101,7 @@ class Spider(scrapy.Spider):
         str_list = re.findall(r'(?<=<p>).+?(?=</p>)', s)
         item = response.meta['item']
 
-        stock_type = stock_dict[item['data']['stock_code']]
+        stock_type = self.stock_dict[item['data']['stock_code']]
 
         global file_path
         if not os.path.exists(file_path):
@@ -110,6 +117,8 @@ class Spider(scrapy.Spider):
 
         with open(file_path + u'更新日志.log', 'a') as f:
             f.write("%s,%s(%s)\n" %(item['data']['datetime'], item['data']['insName'], stock_type))
+
+        time.sleep(2)
 
         # with open(file_path + "_" + stock_type + '.txt','a') as f:
         #     title = u"%s%s:%s" %(item['data']['insName'], item['data']['datetime'], item['title'])

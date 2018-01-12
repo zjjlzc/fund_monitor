@@ -42,8 +42,6 @@ import set_log  # log_obj.debug(文本)  "\x1B[1;32;41m (文本)\x1B[0m"
 log_obj = set_log.Logger(log_path, set_log.logging.WARNING, set_log.logging.DEBUG)
 log_obj.cleanup(log_path, if_cleanup=True) # 是否需要在每次运行程序前清空Log文件
 
-token = "7bc05d0d4c3c22ef9fca8c2a912d779c"
-
 cookie0 = {#"cur_ck_time": "1514945128;",
            "ck_request_key": "O5K2PsIhrWt%2F6oeM707he2IVJiVJHlIQsuVY4FJYNy0%3D;",
                             # UOUa%2F%2Bg6glCWly1TK%2F682x6EO2CAy1EDw0xVEfV%2BSQg%3D;
@@ -58,23 +56,24 @@ cookie0 = {#"cur_ck_time": "1514945128;",
            }
 
 detail_cookie = {
-    'smppw_tz_auth': '1',
-    'http_tK_cache': '971eed91df0b329f5b6a9dc9da4a7729abe39ae6',
-    'passport': '55635%09user_13575486859%09VFJRD1BWBQ9eUFgHBFdUUFdVCwFQBwZUCVVSVlFXUgo%3D9b207ecd5c',
-    'cur_ck_time': '1515393953',
-    'rz_rem_u_p': 'aiFB3odpeWZHIeDOt%2FJ%2BaNkn%2F8V390t5nnkC3N3%2FbHM%3D%24KzJx4oUsxjHHhuNbZ9EmS5OMgDiO8JGftPoh1SVUL24%3D',
-    'stat_sessid': 'd11ovlf8ruebgrh68fsqfaqu11',
-    'autologin_status': '0',
-    'regsms': '1515393938000',
-    'rz_u_p': 'd41d8cd98f00b204e9800998ecf8427e%3Duser_13575486859',
-    'guest_id': '1502416353',
-    'PHPSESSID': 'nq9bqbm583o1tr6hcra3il5rh5',
-    'had_quiz_55635%09user_13575486859%09VFJRD1BWBQ9eUFgHBFdUUFdVCwFQBwZUCVVSVlFXUgo%3D9b207ecd5c': '1515393954000',
-    'ck_request_key': 'ZHZmg4X35RHTWqEvofYkRr53HU25U93AWSua2fYPfzM%3D',
-    'rz_token_6658': 'c6792ed4142577a28ab5639ef93720af.1515393938',
-    'Hm_lvt_c3f6328a1a952e922e996c667234cdae': '1515393938',
-    'fyr_ssid_n5776': 'fyr_n5776_jc5uf9zb',
-    'Hm_lpvt_c3f6328a1a952e922e996c667234cdae': '1515393954'}
+    # "smppw_tz_auth": "1",
+    "http_tK_cache": "8e811c365cf1a65970cd4fe35b9d87ca287647d0",
+    "passport": "55635%09user_13575486859%09VFJRD1BWBQ9eUFgHBFdUUFdVCwFQBwZUCVVSVlFXUgo%3D9b207ecd5c",
+    # "cur_ck_time": "1515648448",
+    "rz_rem_u_p": "aiFB3odpeWZHIeDOt%2FJ%2BaNkn%2F8V390t5nnkC3N3%2FbHM%3D%24KzJx4oUsxjHHhuNbZ9EmS5OMgDiO8JGftPoh1SVUL24%3D",
+    # "stat_sessid": "i02okc46h6qacso048l85o3mh1",
+    # "autologin_status": "0",
+    # "rz_token_6658": "c6aa9f4cfda6e7deb2727599cd97b380.1515648423",
+    "rz_u_p": "d41d8cd98f00b204e9800998ecf8427e%3Duser_13575486859",
+    # "guest_id": "1515845263",
+    # "PHPSESSID": "f40f1u4g89nie0eaunebgecn57",
+    # "had_quiz_55635%09user_13575486859%09VFJRD1BWBQ9eUFgHBFdUUFdVCwFQBwZUCVVSVlFXUgo%3D9b207ecd5c": "1515648444000",
+    "ck_request_key": "MQijspd%2B5gQrsVu5gIn1a3dk1lhZE899i%2Ba02FibNdI%3D",
+    # "regsms": "1515648423000",
+    # "Hm_lvt_c3f6328a1a952e922e996c667234cdae": "1515648423",
+    # "fyr_ssid_n5776": "fyr_n5776_jca1xs0m",
+    # "Hm_lpvt_c3f6328a1a952e922e996c667234cdae": "1515648444",
+}
 
 cookies = []
 for key in cookie0:
@@ -90,38 +89,67 @@ class Spider(scrapy.Spider):
     name = "0007"
 
     def start_requests(self):
-        d1 = self.get_cookies('http://dc.simuwang.com/product/HF00001MTU')
-        print {d['name']: d['value'] for d in d1}
-        d1 = self.get_cookies('http://dc.simuwang.com/fund/getNavList.html?id=HF00001MTU&muid=55635&page=2')
-        print {d['name']: d['value'] for d in d1}
+        # d1 = self.get_cookies('http://dc.simuwang.com/product/HF00001MTU')
+        # d1 = {d['name']: d['value'] for d in d1}
+        # for key in d1:
+        #     print '"%s":"%s",' %(key,d1[key])
 
+        url_dict = {
+            '股票策略':[
+                "http://dc.simuwang.com/ranking/get?page=",
+                "&condition=fund_type%3A1%2C6%2C4%2C3%2C8%2C2%3Bret%3A4%3Brating_year%3A1%3Bstrategy%3A1%3Bistiered%3A0%3Bcompany_type%3A1%3Bsort_name%3Aprofit_col2%3Bsort_asc%3Adesc%3Bkeyword%3A"
+            ],
+            '宏观策略':[
+                "http://dc.simuwang.com/ranking/get?page=",
+                "&condition=fund_type%3A1%2C6%2C4%2C3%2C8%2C2%3Bret%3A4%3Brating_year%3A1%3Bstrategy%3A2%3Bistiered%3A0%3Bcompany_type%3A1%3Bsort_name%3Aprofit_col2%3Bsort_asc%3Adesc%3Bkeyword%3A"
+            ],
+            '管理期货':[
+                "http://dc.simuwang.com/ranking/get?page=",
+                "&condition=fund_type%3A1%2C6%2C4%2C3%2C8%2C2%3Bret%3A4%3Brating_year%3A1%3Bstrategy%3A3%3Bistiered%3A0%3Bcompany_type%3A1%3Bsort_name%3Aprofit_col2%3Bsort_asc%3Adesc%3Bkeyword%3A"
+            ],
+            '事件驱动':[
+                "http://dc.simuwang.com/ranking/get?page=",
+                "&condition=fund_type%3A1%2C6%2C4%2C3%2C8%2C2%3Bret%3A4%3Brating_year%3A1%3Bstrategy%3A4%3Bistiered%3A0%3Bcompany_type%3A1%3Bsort_name%3Aprofit_col2%3Bsort_asc%3Adesc%3Bkeyword%3A"
+            ],
+            '相对价值':[
+                "http://dc.simuwang.com/ranking/get?page=",
+                "&condition=fund_type%3A1%2C6%2C4%2C3%2C8%2C2%3Bret%3A4%3Brating_year%3A1%3Bstrategy%3A5%3Bistiered%3A0%3Bcompany_type%3A1%3Bsort_name%3Aprofit_col2%3Bsort_asc%3Adesc%3Bkeyword%3A"
+            ],
+            '固定收益':[
+                "http://dc.simuwang.com/ranking/get?page=",
+                "&condition=fund_type%3A1%2C6%2C4%2C3%2C8%2C2%3Bret%3A4%3Brating_year%3A1%3Bstrategy%3A6%3Bistiered%3A0%3Bcompany_type%3A1%3Bsort_name%3Aprofit_col2%3Bsort_asc%3Adesc%3Bkeyword%3A"
+            ]
+        }
 
-        url = 'http://dc.simuwang.com/ranking/get?page=1&condition=fund_type%3A1%2C6%2C4%2C3%2C8%2C2%3Bret%3A1%3Brating_year%3A1%3Bstrategy%3A1%3Bistiered%3A0%3Bcompany_type%3A1%3Bsort_name%3Aprofit_col2%3Bsort_asc%3Adesc%3Bkeyword%3A'
-        # 获取总页数
-        driver = driver_manager.initialization()
-        driver.get(url)
-        # print driver.get_cookies()
-        # print {d['name']:d['value'] for d in driver.get_cookies()}
-        global cookies
-        for cookie0 in cookies:
-            driver.add_cookie(cookie0)
-        driver.get(url)
-        # print driver.page_source
+        for key in url_dict:
+            url = "%s1%s" %(url_dict[key][0], url_dict[key][1])
+            print url
+            # 获取总页数
+            driver = driver_manager.initialization()
+            driver.get(url)
+            # print driver.get_cookies()
+            # print {d['name']:d['value'] for d in driver.get_cookies()}
+            global cookies
+            for cookie0 in cookies:
+                driver.add_cookie(cookie0)
+            driver.get(url)
+            # print driver.page_source
 
-        data = json.loads(re.search(r'{.+}', driver.page_source).group())
-        print u"第一页数据长度%s" %len(data["data"])
-        page_num = 2 # int(data["pager"]["pagecount"])
+            data = json.loads(re.search(r'{.+}', driver.page_source).group())
+            print u"第一页数据长度%s" %len(data["data"])
+            page_num = 2 # int(data["pager"]["pagecount"])
 
-        urls = ['http://dc.simuwang.com/ranking/get?page=%s' %(i+1) +
-                '&condition=fund_type%3A1%2C6%2C4%2C3%2C8%2C2%3Bret%3A1%3Brating_year%3A1%3Bstrategy%3A1%3Bistiered%3A0%3Bcompany_type%3A1%3Bsort_name%3Aprofit_col2%3Bsort_asc%3Adesc%3Bkeyword%3A'  for i in range(page_num)]
-        cookies = {d['name']: d['value'] for d in driver.get_cookies()}
-        driver.quit()
+            urls = ["%s%s%s" %(url_dict[key][0], i+1, url_dict[key][1]) for i in range(page_num)]
+            cookies = {d['name']: d['value'] for d in driver.get_cookies()}
+            driver.quit()
 
-        # 每页爬取
-        for url in urls:
-            item = fund_monitor.items.FundMonitorItem()
-            item['cookies'] = cookies
-            yield scrapy.Request(url=url, meta={'item': item}, cookies=item['cookies'], callback=self.parse0)
+            # 每页爬取
+            for url in urls:
+                item = fund_monitor.items.FundMonitorItem()
+                item['cookies'] = cookies
+                item['data'] = {'fund_type': key}
+                time.sleep(1)
+                yield scrapy.Request(url=url, meta={'item': item}, cookies=item['cookies'], callback=self.parse0)
 
     def parse0(self, response):
         item = response.meta['item']
@@ -129,6 +157,7 @@ class Spider(scrapy.Spider):
         data = data["data"]
 
         df = pd.DataFrame(data)
+        df.to_excel(u'私募排排网.xlsx')
         df = df.reindex(['city', 'company_id', 'company_short_name', 'fund_id', 'fund_name', 'fund_short_name', 'inception_date', 'province',
                          'register_number', 'web_site'], axis=1)
         df['web_site'] = u'私募排排网'
@@ -136,36 +165,63 @@ class Spider(scrapy.Spider):
 
         for fund_id in df.index:
             item0 = item.copy()
-            url = 'http://dc.simuwang.com/product/%s' %fund_id
-            item0['data'] = df.loc[fund_id,:]
-
-            # print item['cookies']
             global detail_cookie
-            item0['cookies'] = detail_cookie #.update(detail_cookie)
-            # print item0['cookies']
-            yield scrapy.Request(url=url, meta={'item': item0}, cookies=item['cookies'], callback=self.parse1)
+            item0['cookies'] = detail_cookie
+            item0['fund_name'] = df.loc[fund_id, 'fund_name']
+
+            # # 产品要素
+            # url = 'http://dc.simuwang.com/fund/getPinfo.html?id=%s&muid=55635' %fund_id
+            # item0['data'] = df.loc[fund_id,:]
+            # yield scrapy.Request(url=url, meta={'item': item0}, cookies=item0['cookies'], callback=self.parse1)
+
+            # 历史净值
+            url = "http://dc.simuwang.com/fund/getNavList.html?id=%s&muid=55635&page=1" % fund_id
+            data = requests_manager.get_html(url, cookies=item0['cookies'])
+            json_data = json.loads(data)
+            print u'基金%s有%s页数据' %(fund_id, json_data['pager']['pagecount'])
+
+            for i in range(json_data['pager']['pagecount']):
+                url = "http://dc.simuwang.com/fund/getNavList.html?id=%s&muid=55635&page=%s" %(fund_id,i+1)
+                yield scrapy.Request(url=url, meta={'item': item0}, cookies=item0['cookies'], callback=self.parse2)
 
     def parse1(self, response):
         item = response.meta['item']
+        # print response.text
+        df = pd.read_html("<table>%s</table>" %response.text)[0]
+        arr = np.array(df).reshape(-1, 2)
+        df = pd.DataFrame(arr).set_index(0).T
+        print df.drop([df.columns[-1],], axis=1)
 
-        bs_obj = bs4.BeautifulSoup(response.text, 'html.parser')
+    def parse2(self, response):
+        item = response.meta['item']
+        json_data = json.loads(response.text)
+        file_path = '%s/%s/%s/' %(os.getcwd(), u'私募基金', item['data']['fund_type'])
+        if not os.path.exists(file_path):
+            os.makedirs(file_path)
 
-        # 产品要素
-        print response.url
-        print item['data']['fund_name']
-        with open('test.html', 'w') as f:
-            f.write(response.text)
-        print pd.read_html(response.text, attrs={'id':'product-detail-table'})
+        if "data" in json_data:
+            df = pd.DataFrame(json_data["data"]).rename({'c':u'净值变动',
+                                                         'd':u'日期',
+                                                         'n': u'单位净值',
+                                                         'cn': u'累计净值(分红再投资)',
+                                                         'cnw':u'累计净值(分红不投资)'}, axis=1)
+            df[u'净值变动'] = df[u'净值变动'].apply(lambda s:re.sub(r'<.+?>', '', s))
+            df[u'基金名称'] = item['fund_name']
+
+            file0 = file_path + item['fund_name'] + '.xlsx'
+            if not os.path.exists(file0):
+                pd.DataFrame([]).to_excel(file0)
+
+            pd.read_excel(file0).append(df,ignore_index=True).to_excel(file0, index=None)
+
+            print df
 
 
     def get_cookies(self, url):
-
         while True:
             driver = driver_manager.initialization(engine='Chrome')
-            # print driver.orientation
             try:
                 driver.get(url) #'http://www.simuwang.com/')
-
 
                 while not driver.find_elements_by_id('gr-login-box'):
                     driver.find_element_by_class_name('topRight').find_element_by_tag_name('a').click()
@@ -217,7 +273,8 @@ class Spider(scrapy.Spider):
     #
     #     except:
     #         log_obj.error("%s中无法解析\n原因：%s" %(self.name, traceback.format_exc()))
-
+    # http://dc.simuwang.com/ranking/get?page=1&condition=fund_type%3A1%2C6%2C4%2C3%2C8%2C2%3Bret%3A4%3Brating_year%3A1%3Bistiered%3A0%3Bcompany_type%3A1%3Bsort_name%3Aprofit_col2%3Bsort_asc%3Adesc%3Bkeyword%3A
+    # http://dc.simuwang.com/ranking/get?page=1&condition=fund_type%3A1%2C6%2C4%2C3%2C8%2C2%3Bret%3A2%3Brating_year%3A1%3Bistiered%3A0%3Bcompany_type%3A1%3Bsort_name%3Aprofit_col2%3Bsort_asc%3Adesc%3Bkeyword%3A
 
 if __name__ == '__main__':
     pass

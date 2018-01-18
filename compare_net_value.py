@@ -356,8 +356,8 @@ class compare_net_value(object):
             print u"正在计算基金：", fund_code
             start_time = time.time()
             try:
-                web_net_value = self.get_net_value(fund_code, date_l[0][1], date_l[-1][-1])
-                cal_net_value = cal_fitting_net_value.combine_net_value(fund_code, date_l)
+                web_net_value = self.get_net_value(fund_code, date_l[0][1], date_l[-1][-1]).astype(np.float64)
+                cal_net_value = cal_fitting_net_value.combine_net_value(fund_code, date_l).astype(np.float64)
                 df = web_net_value.join(cal_net_value)
 
                 df = df.dropna()
@@ -369,14 +369,14 @@ class compare_net_value(object):
                 # 改成中文标题后输出，源数据不改
                 # df['fund_code'] = fund_code
                 output_df0 = df.copy()
-                output_df0[u'比较'] = [datetime.datetime.strptime(date, '%Y-%m-%d').isoweekday() for date in output_df0.index]
+                output_df0[u'净值周涨幅'] = [datetime.datetime.strptime(date, '%Y-%m-%d').isoweekday() for date in output_df0.index]
 
 
-                rate = ((output_df0[output_df0[u'比较']==5])['accumulative_net_value'].astype(np.float) / (output_df0[output_df0[u'比较']==5])['accumulative_net_value'].shift(1).astype(np.float) -1).copy()
+                rate = ((output_df0[output_df0[u'净值周涨幅']==5])['accumulative_net_value'].astype(np.float) / (output_df0[output_df0[u'净值周涨幅']==5])['accumulative_net_value'].shift(1).astype(np.float) -1).copy()
                 # print (output_df0[output_df0[u'比较']==5])['accumulative_net_value'].astype(np.float)
                 # print (output_df0[output_df0[u'比较']==5])['accumulative_net_value'].shift(1).astype(np.float)
                 # print rate
-                output_df0[u'比较'] = rate
+                output_df0[u'净值周涨幅'] = rate
                 # print output_df0
 
                 sql = """
@@ -419,9 +419,9 @@ class compare_net_value(object):
 
                 res = res.append(df0.iloc[0, :].reindex(['fund_code', 'fund_name']).rename({'fund_code': u'基金代号', 'fund_name': u'基金名称'}))
 
-                res = res.append(pd.Series([ser_total[u'拟合净值收益率'] - ser_total[u'折算净值收益率'],
-                                            ser_total[u'拟合净值收益率'],
-                                            ser_total[u'折算净值收益率']
+                res = res.append(pd.Series(["{:.2%}".format(ser_total[u'拟合净值收益率'] - ser_total[u'折算净值收益率']),
+                                            "{:.2%}".format(ser_total[u'拟合净值收益率']),
+                                            "{:.2%}".format(ser_total[u'折算净值收益率'])
                                             ],
                                            index=[
                                                u'收益率比较',
@@ -429,10 +429,10 @@ class compare_net_value(object):
                                                u'折算净值收益率'
                                            ]))
 
-                res = res.append(pd.Series([ser_total[u'拟合净值最大回撤'],
-                                            ser_total[u'折算净值最大回撤'],
-                                            ser_total[u'拟合净值收益回撤比'],
-                                            ser_total[u'折算净值收益回撤比'],
+                res = res.append(pd.Series(["{:.2%}".format(ser_total[u'拟合净值最大回撤']),
+                                            "{:.2%}".format(ser_total[u'折算净值最大回撤']),
+                                            "{:.4f}".format(ser_total[u'拟合净值收益回撤比']),
+                                            "{:.4f}".format(ser_total[u'折算净值收益回撤比']),
 
                                             ],
                                            index=[

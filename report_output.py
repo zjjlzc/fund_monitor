@@ -68,7 +68,17 @@ class report_output(object):
         # os.remove(compare_net_value1)
 
         df = pd.read_csv(compare_net_value2, encoding='utf8', index_col=None).T
-        df.to_excel(writer, u'净值拟合数据', index=None)
+
+        # 调整格式
+        for i in range(df.shape[1]):
+            if i % 5 in [0,1,2]:
+                df.iloc[1:, i] = df.iloc[1:, i].astype(np.float64).round(4)
+            elif i % 5 == 3:
+                df.iloc[1:, i] = df.iloc[1:, i].apply(lambda s:"%s%s" %(round(float(s),4) * 100, "%") if not isinstance(s, type(np.nan)) else np.nan)
+            elif i % 5 == 4:
+                df.iloc[:, i] = df.iloc[:, i].apply(lambda s:datetime.datetime.strptime(s, '%Y-%m-%d').date() if not isinstance(s, type(np.nan)) else np.nan)
+        # print df
+        df.to_excel(writer, u'净值拟合数据')
         # os.remove(compare_net_value2)
 
         # fund_holdings_display = self.fund_holdings_display.display_all(fund_file)
@@ -79,6 +89,7 @@ class report_output(object):
         # # os.remove(fund_holdings_display)
 
         writer.save()
+        # 163212
 
 
 
@@ -86,4 +97,4 @@ class report_output(object):
 
 if __name__ == '__main__':
     report_output = report_output()
-    report_output.daily_report('important_fund.txt')
+    report_output.daily_report('important_fund2.txt')

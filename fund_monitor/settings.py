@@ -43,7 +43,7 @@ SPEED_PIPELINE_ASYNC_DELAY=3
 SPEED_SPIDER_BLOCKING_DELAY=0.2
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-#CONCURRENT_REQUESTS = 32
+CONCURRENT_REQUESTS = 6
 
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay

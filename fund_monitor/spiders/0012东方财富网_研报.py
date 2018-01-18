@@ -116,7 +116,7 @@ class Spider(scrapy.Spider):
             f.write('\n\n')
 
         with open(file_path + u'更新日志.log', 'a') as f:
-            f.write("%s,%s(%s)\n" %(item['data']['datetime'], item['data']['insName'], stock_type))
+            f.write("%s,%s(%s)\n" %(item['data']['datetime'], item['data']['stock_name'], stock_type))
 
         time.sleep(2)
 

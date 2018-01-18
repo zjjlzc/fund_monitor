@@ -57,10 +57,12 @@ cookie0 = {#"cur_ck_time": "1514945128;",
 
 detail_cookie = {
     # "smppw_tz_auth": "1",
-    "http_tK_cache": "1ced45dff24b8587ff1608436eb66685c82b5e59",
+    "http_tK_cache": "15f87621b89053c1e04489ad6e8ba2874442a147",
     "passport": "55635%09user_13575486859%09VFJRD1BWBQ9eUFgHBFdUUFdVCwFQBwZUCVVSVlFXUgo%3D9b207ecd5c",
+               # 55635%09user_13575486859%09VFJRD1BWBQ9eUFgHBFdUUFdVCwFQBwZUCVVSVlFXUgo%3D9b207ecd5c
     # "cur_ck_time": "1515648448",
     "rz_rem_u_p": "aiFB3odpeWZHIeDOt%2FJ%2BaNkn%2F8V390t5nnkC3N3%2FbHM%3D%24KzJx4oUsxjHHhuNbZ9EmS5OMgDiO8JGftPoh1SVUL24%3D",
+                 # aiFB3odpeWZHIeDOt%2FJ%2BaNkn%2F8V390t5nnkC3N3%2FbHM%3D%24KzJx4oUsxjHHhuNbZ9EmS5OMgDiO8JGftPoh1SVUL24%3D
     # "stat_sessid": "i02okc46h6qacso048l85o3mh1",
     # "autologin_status": "0",
     # "rz_token_6658": "c6aa9f4cfda6e7deb2727599cd97b380.1515648423",
@@ -68,7 +70,7 @@ detail_cookie = {
     # "guest_id": "1515845263",
     # "PHPSESSID": "f40f1u4g89nie0eaunebgecn57",
     # "had_quiz_55635%09user_13575486859%09VFJRD1BWBQ9eUFgHBFdUUFdVCwFQBwZUCVVSVlFXUgo%3D9b207ecd5c": "1515648444000",
-    "ck_request_key": "N%2BK73PwNc8ntaYZw6YSK9X%2FJl7r5qvVo%2B4fH5uhej%2Fc%3D",
+    "ck_request_key": "WHRaWwQjUUZ1UQKaWt2Hbn1WwslZQchf6h11LzviR3Q%3D",
     # "regsms": "1515648423000",
     # "Hm_lvt_c3f6328a1a952e922e996c667234cdae": "1515648423",
     # "fyr_ssid_n5776": "fyr_n5776_jca1xs0m",
@@ -99,26 +101,26 @@ class Spider(scrapy.Spider):
                 "http://dc.simuwang.com/ranking/get?page=",
                 "&condition=fund_type%3A1%2C6%2C4%2C3%2C8%2C2%3Bret%3A4%3Brating_year%3A1%3Bstrategy%3A1%3Bistiered%3A0%3Bcompany_type%3A1%3Bsort_name%3Aprofit_col2%3Bsort_asc%3Adesc%3Bkeyword%3A"
             ],
-            # '宏观策略':[
-            #     "http://dc.simuwang.com/ranking/get?page=",
-            #     "&condition=fund_type%3A1%2C6%2C4%2C3%2C8%2C2%3Bret%3A4%3Brating_year%3A1%3Bstrategy%3A2%3Bistiered%3A0%3Bcompany_type%3A1%3Bsort_name%3Aprofit_col2%3Bsort_asc%3Adesc%3Bkeyword%3A"
-            # ],
-            # '管理期货':[
-            #     "http://dc.simuwang.com/ranking/get?page=",
-            #     "&condition=fund_type%3A1%2C6%2C4%2C3%2C8%2C2%3Bret%3A4%3Brating_year%3A1%3Bstrategy%3A3%3Bistiered%3A0%3Bcompany_type%3A1%3Bsort_name%3Aprofit_col2%3Bsort_asc%3Adesc%3Bkeyword%3A"
-            # ],
-            # '事件驱动':[
-            #     "http://dc.simuwang.com/ranking/get?page=",
-            #     "&condition=fund_type%3A1%2C6%2C4%2C3%2C8%2C2%3Bret%3A4%3Brating_year%3A1%3Bstrategy%3A4%3Bistiered%3A0%3Bcompany_type%3A1%3Bsort_name%3Aprofit_col2%3Bsort_asc%3Adesc%3Bkeyword%3A"
-            # ],
-            # '相对价值':[
-            #     "http://dc.simuwang.com/ranking/get?page=",
-            #     "&condition=fund_type%3A1%2C6%2C4%2C3%2C8%2C2%3Bret%3A4%3Brating_year%3A1%3Bstrategy%3A5%3Bistiered%3A0%3Bcompany_type%3A1%3Bsort_name%3Aprofit_col2%3Bsort_asc%3Adesc%3Bkeyword%3A"
-            # ],
-            # '固定收益':[
-            #     "http://dc.simuwang.com/ranking/get?page=",
-            #     "&condition=fund_type%3A1%2C6%2C4%2C3%2C8%2C2%3Bret%3A4%3Brating_year%3A1%3Bstrategy%3A6%3Bistiered%3A0%3Bcompany_type%3A1%3Bsort_name%3Aprofit_col2%3Bsort_asc%3Adesc%3Bkeyword%3A"
-            # ]
+            '宏观策略':[
+                "http://dc.simuwang.com/ranking/get?page=",
+               "&condition=fund_type%3A1%2C6%2C4%2C3%2C8%2C2%3Bret%3A4%3Brating_year%3A1%3Bstrategy%3A2%3Bistiered%3A0%3Bcompany_type%3A1%3Bsort_name%3Aprofit_col2%3Bsort_asc%3Adesc%3Bkeyword%3A"
+            ],
+            '管理期货':[
+                "http://dc.simuwang.com/ranking/get?page=",
+                "&condition=fund_type%3A1%2C6%2C4%2C3%2C8%2C2%3Bret%3A4%3Brating_year%3A1%3Bstrategy%3A3%3Bistiered%3A0%3Bcompany_type%3A1%3Bsort_name%3Aprofit_col2%3Bsort_asc%3Adesc%3Bkeyword%3A"
+            ],
+            '事件驱动':[
+                "http://dc.simuwang.com/ranking/get?page=",
+                "&condition=fund_type%3A1%2C6%2C4%2C3%2C8%2C2%3Bret%3A4%3Brating_year%3A1%3Bstrategy%3A4%3Bistiered%3A0%3Bcompany_type%3A1%3Bsort_name%3Aprofit_col2%3Bsort_asc%3Adesc%3Bkeyword%3A"
+            ],
+            '相对价值':[
+                "http://dc.simuwang.com/ranking/get?page=",
+                "&condition=fund_type%3A1%2C6%2C4%2C3%2C8%2C2%3Bret%3A4%3Brating_year%3A1%3Bstrategy%3A5%3Bistiered%3A0%3Bcompany_type%3A1%3Bsort_name%3Aprofit_col2%3Bsort_asc%3Adesc%3Bkeyword%3A"
+            ],
+            '固定收益':[
+                "http://dc.simuwang.com/ranking/get?page=",
+                "&condition=fund_type%3A1%2C6%2C4%2C3%2C8%2C2%3Bret%3A4%3Brating_year%3A1%3Bstrategy%3A6%3Bistiered%3A0%3Bcompany_type%3A1%3Bsort_name%3Aprofit_col2%3Bsort_asc%3Adesc%3Bkeyword%3A"
+            ]
         }
 
         for key in url_dict:

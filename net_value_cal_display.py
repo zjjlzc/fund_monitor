@@ -60,6 +60,7 @@ json_data = api51.connect(user_key, d)
 data000001 = pd.DataFrame(json_data['data']['candle']['000001.SS'])
 
 date_ser = data000001[0].apply(lambda num:datetime.datetime.strptime(str(num),'%Y%m%d'))
+last_date = date_ser.iloc[-1]
 
 class net_value_cal_display(object):
 
@@ -69,124 +70,126 @@ class net_value_cal_display(object):
 
         # self.date_ser = date_ser.copy()
 
-        date_today = date_ser.iloc[-1]
+        global last_date
         self.daily_report_date = {
             u'5天': {
                 'date1': date_ser.iloc[-5],
-                'date2': date_today
+                'date2': last_date
             },
             u'本周': {
-                'date1': date_today - datetime.timedelta(date_today.weekday()),
-                'date2': date_today
+                'date1': last_date - datetime.timedelta(last_date.weekday()),
+                'date2': last_date
             },
             u'本月': {
-                'date1': datetime.datetime(year=date_today.year, month=date_today.month, day=1),
-                'date2': date_today
+                'date1': datetime.datetime(year=last_date.year, month=last_date.month, day=1),
+                'date2': last_date
             },
             u'前月': {
-                'date1': (date_today - dateutil.relativedelta.relativedelta(months=1)).replace(day=1),
-                'date2': (date_today - dateutil.relativedelta.relativedelta(months=1)).replace(
-                                                    day=calendar.monthrange((date_today - dateutil.relativedelta.relativedelta(months=1)).year,
-                                                                            month=((date_today - dateutil.relativedelta.relativedelta(months=1)).month))[1]
+                'date1': (last_date - relativedelta(months=1)).replace(day=1),
+                'date2': (last_date - relativedelta(months=1)).replace(day=calendar.monthrange((last_date - relativedelta(months=1)).year,
+                                                                            month=((last_date - relativedelta(months=1)).month))[1]
                 )
             },
             u'本季': {
-                'date1': datetime.datetime(year=date_today.year, month=int((date_today.month - 1) / 3) * 3 + 1, day=1),
-                'date2': date_today
+                'date1': datetime.datetime(year=last_date.year, month=int((last_date.month - 1) / 3) * 3 + 1, day=1),
+                'date2': last_date
             }
         }
+
+    # def get_data(self, code, date1, date2):
+    #     date1 = date1.strftime('%Y-%m-%d')
+    #     date2 = date2.strftime('%Y-%m-%d')
+    #     sql = 'SELECT `crawler_key`, `fund_code`, `value_date`,`accumulative_net_value` FROM `eastmoney_daily_data` WHERE `fund_code` = %s AND (`value_date` BETWEEN "%s" AND "%s")' %(code,date1,date2)
+    #     # print sql
+    #     with closing(pymysql.connect('10.10.10.15', 'spider', 'jlspider', 'spider', charset='utf8')) as conn:
+    #         df = pd.read_sql(sql, conn)
+    #     # print df.head(5)
+    #     return df
+
+    # def simple_cal(self, fund_code, date1, date2, earnings_type):
+    #     print u"正在准备计算%s的从%s到%s的%s数据" %(fund_code, date1, date2, earnings_type)
+    #     # print 'mark00'
+    #     date_col = u'value_date'
+    #     value_col = u'accumulative_net_value'
+    #     target_col = u'retracement'
+    #     df = self.get_data(fund_code, date1, date2)  # 从数据库读取数据
+    #     df = df.drop(df.index[df['accumulative_net_value'] == ''], axis=0)
+    #     df.loc[:, date_col] = pd.to_datetime(df.loc[:, date_col])
+    #
+    #     # 截取所需时间内的数据,数据取到小于date1的最后一个
+    #     serx = df[date_col][df[date_col].between(datetime.datetime(1800, 1, 1), date1 - datetime.timedelta(1))]
+    #     if not serx.empty:
+    #         serx = serx.sort_values()
+    #         date1 = serx.iat[-1]
+    #
+    #     df = df[df[date_col].between(date1, date2)].copy()
+    #     # 修正日期
+    #     df = df.sort_values([date_col, ])  # 按时间排序
+    #     if df.empty:
+    #         print u'从eastmoney_daily_data读取的数据为空'
+    #         return None
+    #     date1 = df[date_col].iat[0]
+    #     date2 = df[date_col].iat[-1]
+    #
+    #     func_max = lambda date: max(df[value_col][df[date_col] <= date])
+    #     df.index = range(df.shape[0])
+    #
+    #     df['accumulative_net_value'] = df['accumulative_net_value'].astype(np.float)
+    #     for i in range(1, df.shape[0]):
+    #         # print 'mark1'
+    #         value0 = df.loc[i, value_col]
+    #         date0 = df.loc[i, date_col]
+    #         df.loc[i, 'max'] = func_max(date0)
+    #         if value0 < func_max(date0):
+    #             df.loc[i, target_col] = (value0 / func_max(date0)) - 1
+    #         else:
+    #             df.loc[i, target_col] = 0
+    #
+    #     #df.to_csv('caculated_data.csv', encoding='utf_8_sig')
+    #
+    #     if earnings_type == u'年化收益':
+    #         product_yield = (df[value_col].iat[-1] / df[value_col].iat[0] - 1) * 365.0 / (
+    #                            df[date_col].iat[-1] - df[date_col].iat[0]).days  # 最后一个除以第一个，减1
+    #     elif earnings_type == u'收益':
+    #         product_yield = df[value_col].iat[-1] / df[value_col].iat[0] - 1  # 最后一个除以第一个，减1
+    #     else:
+    #         product_yield = None
+    #
+    #     if target_col in df:
+    #         retracement = min(df[target_col].dropna())
+    #
+    #         if retracement:
+    #             earnings_retracement_ratio = float(product_yield) / (-retracement)
+    #         else:
+    #             earnings_retracement_ratio = None
+    #         return pd.Series([df['fund_code'].iat[0], product_yield, retracement, earnings_retracement_ratio],
+    #                          index=[u'基金代号', earnings_type, u'回撤', u'收益回撤比'])
+
+    def weekly_report(self):
+        """
+        周报，默认取值为上周五
+        :return:
+        """
         print 'self.daily_report_date'
         for key in self.daily_report_date:
             print key, self.daily_report_date[key]
 
-    def get_data(self, code, date1, date2):
-        date1 = date1.strftime('%Y-%m-%d')
-        date2 = date2.strftime('%Y-%m-%d')
-        sql = 'SELECT `crawler_key`, `fund_code`, `value_date`,`accumulative_net_value` FROM `eastmoney_daily_data` WHERE `fund_code` = %s AND (`value_date` BETWEEN "%s" AND "%s")' %(code,date1,date2)
-        # print sql
-        with closing(pymysql.connect('10.10.10.15', 'spider', 'jlspider', 'spider', charset='utf8')) as conn:
-            df = pd.read_sql(sql, conn)
-        # print df.head(5)
-        return df
-
-    def simple_cal(self, fund_code, date1, date2, earnings_type):
-        print u"正在准备计算%s的从%s到%s的%s数据" %(fund_code, date1, date2, earnings_type)
-        # print 'mark00'
-        date_col = u'value_date'
-        value_col = u'accumulative_net_value'
-        target_col = u'retracement'
-        df = self.get_data(fund_code, date1, date2)  # 从数据库读取数据
-        df = df.drop(df.index[df['accumulative_net_value'] == ''], axis=0)
-        df.loc[:, date_col] = pd.to_datetime(df.loc[:, date_col])
-
-        # 截取所需时间内的数据,数据取到小于date1的最后一个
-        serx = df[date_col][df[date_col].between(datetime.datetime(1800, 1, 1), date1 - datetime.timedelta(1))]
-        if not serx.empty:
-            serx = serx.sort_values()
-            date1 = serx.iat[-1]
-
-        df = df[df[date_col].between(date1, date2)].copy()
-        # 修正日期
-        df = df.sort_values([date_col, ])  # 按时间排序
-        if df.empty:
-            print u'从eastmoney_daily_data读取的数据为空'
-            return None
-        date1 = df[date_col].iat[0]
-        date2 = df[date_col].iat[-1]
-
-        func_max = lambda date: max(df[value_col][df[date_col] <= date])
-        df.index = range(df.shape[0])
-
-        df['accumulative_net_value'] = df['accumulative_net_value'].astype(np.float)
-        for i in range(1, df.shape[0]):
-            # print 'mark1'
-            value0 = df.loc[i, value_col]
-            date0 = df.loc[i, date_col]
-            df.loc[i, 'max'] = func_max(date0)
-            if value0 < func_max(date0):
-                df.loc[i, target_col] = (value0 / func_max(date0)) - 1
-            else:
-                df.loc[i, target_col] = 0
-
-        #df.to_csv('caculated_data.csv', encoding='utf_8_sig')
-
-        if earnings_type == u'年化收益':
-            product_yield = (df[value_col].iat[-1] / df[value_col].iat[0] - 1) * 365.0 / (
-                               df[date_col].iat[-1] - df[date_col].iat[0]).days  # 最后一个除以第一个，减1
-        elif earnings_type == u'收益':
-            product_yield = df[value_col].iat[-1] / df[value_col].iat[0] - 1  # 最后一个除以第一个，减1
-        else:
-            product_yield = None
-
-        if target_col in df:
-            retracement = min(df[target_col].dropna())
-
-            if retracement:
-                earnings_retracement_ratio = float(product_yield) / (-retracement)
-            else:
-                earnings_retracement_ratio = None
-            return pd.Series([df['fund_code'].iat[0], product_yield, retracement, earnings_retracement_ratio],
-                             index=[u'基金代号', earnings_type, u'回撤', u'收益回撤比'])
-
-    def weekly_report(self):
-
         with open('weekly_fund.txt', 'r') as f:
             code_list = f.read().split('\n')
 
-        if os.path.exists(u'周报.xls'):
-            os.remove(u'周报.xls')
-        #
-        # df = pd.DataFrame(code_list, columns=['fund_code',])
-        # df.index = df['fund_code']
         df = pd.DataFrame([])
 
         global date_ser
-
-        last_friday = max([date for date in date_ser if date.isoweekday()==5]) #  datetime.datetime(year=2017, month=10, day=31) #
+        global last_date
+        # last_friday = max([date for date in date_ser if date.isoweekday()==5]) #  datetime.datetime(year=2017, month=10, day=31) #
+        last_week_num = (last_date - relativedelta(weeks=1)).isocalendar()[1]
+        last_friday = max([date for date in date_ser if date.isocalendar()[1] == last_week_num])
         date_ser = date_ser[date_ser<=last_friday]
-        # print last_friday
-        # print last_friday - datetime.timedelta(7)
-        # print last_friday, date_ser
+        print u'weekly_report =>周报截止日期为', last_friday
+
+        output_file = u'%s周报.xls' %last_friday.strftime('%Y-%m-%d')
+        if os.path.exists(output_file):
+            os.remove(output_file)
 
         start_time = time.time()
         for fund_code in code_list:
@@ -438,13 +441,15 @@ class net_value_cal_display(object):
                     df.loc[fund_code, s + data_type] = d[s]['res'][data_type] if d[s]['res'] is not None and not d[s]['res'].empty else None
 
                 # 近三个月的月收益率
-                for date1 in [datetime.datetime(year=last_friday.year,month=(last_friday - relativedelta(months=i)).month,day=1) for i in [0,1,2]]:
-                    date2 = datetime.datetime(year=date1.year, month=date1.month, day=calendar.monthrange(date1.year,month=date1.month)[1])
+                for date1 in [last_friday - relativedelta(months=i) for i in [0,1,2]]:
+                    date2 = date1.replace(day=calendar.monthrange(date1.year,month=date1.month)[1])
                     ser = func(date1, date2)
                     df.loc[fund_code, u'%s年%s月收益' %(date1.year,date1.month)] = ser[u'收益率'] if ser is not None and not ser.empty else None
 
                 # 今年的季度数据
                 for month1 in [10,7,4,1]:
+                    if month1 > last_friday.month:
+                        break
                     month2 = month1 + 2
                     date1 = datetime.datetime(year=last_friday.year,month=month1,day=1)
                     date2 = datetime.datetime(year=last_friday.year,month=month2,day=calendar.monthrange(last_friday.year,month=month2)[1])
@@ -470,7 +475,6 @@ class net_value_cal_display(object):
                 for s in [u'近一年', u'近两年', u'今年以来',u'成立以来',u'2016年2月29日以来']:
                     data_type = u'收益回撤比'
                     df.loc[fund_code, s + data_type] = d[s]['res'][data_type] if d[s]['res'] is not None and not d[s]['res'].empty else None
-
 
                 # # 今天日收益
                 # ser = self.simple_cal(fund_code, last_friday, last_friday,u'收益')
@@ -680,8 +684,7 @@ class net_value_cal_display(object):
 
 
                 # 昨天与上个月底的股票仓位预测
-                date_1 = datetime.datetime(year=date_today.year, month=(date_today - relativedelta(months=1)).month,
-                                  day=calendar.monthrange(date_today.year, (date_today - relativedelta(months=1)).month)[1])
+                date_1 = date_ser[date_ser < datetime.datetime(year=date_today.year, month=date_today.month,day=1)].max()
                 for date0 in [date_ser.iloc[-2], date_1]:
                     sql = """
                     SELECT `value_date`, `fund_shares_positions` FROM `eastmoney_daily_data`
@@ -696,8 +699,7 @@ class net_value_cal_display(object):
                     df.loc[fund_code, datex + u"股票仓位"] = df0.loc[0, 'fund_shares_positions'] if not df0.empty else None
 
 
-
-                df.loc[fund_code, u"日收益率"] = net_value_df.loc[0, 'estimate_daily_growth_rate'] if not net_value_df.empty else None
+                df.loc[fund_code, u"日收益率"] = net_value_df.loc[0, 'estimate_daily_growth_rate'] if not net_value_df.empty else None #
 
                 d = self.daily_report_date.copy()
 
@@ -715,15 +717,15 @@ class net_value_cal_display(object):
 
                 for s in [u'5天', u'本周', u'本月', u'前月', u'本季']:
                     data_type = u'收益率'
-                    df.loc[fund_code, s + data_type] = d[s]['res'][data_type] if d[s]['res'] is not None and not d[s]['res'].empty else None
+                    df.loc[fund_code, s + data_type] = "{:.2%}".format(d[s]['res'][data_type]) if d[s]['res'] is not None and not d[s]['res'].empty else None
 
                 for s in [u'5天', u'本月', u'前月', u'本季']:
                     data_type = u'最大回撤'
-                    df.loc[fund_code, s + data_type] = d[s]['res'][data_type] if d[s]['res'] is not None and not d[s]['res'].empty else None
+                    df.loc[fund_code, s + data_type] = "{:.2%}".format(d[s]['res'][data_type]) if d[s]['res'] is not None and not d[s]['res'].empty else None
 
                 for s in [u'本月', u'前月']:
                     data_type = u'收益回撤比'
-                    df.loc[fund_code, s + data_type] = d[s]['res'][data_type] if d[s]['res'] is not None and not d[s]['res'].empty else None
+                    df.loc[fund_code, s + data_type] = "{:.4f}".format(d[s]['res'][data_type]) if d[s]['res'] is not None and not d[s]['res'].empty and d[s]['res'][data_type] else None
 
                 # 补齐基金分类
                 df.loc[fund_code, u'基金类型'] = fund_info['fund_type'].iloc[0]
@@ -832,15 +834,16 @@ class net_value_cal_display(object):
 
             for s in [u'今日', u'5天', u'本周', u'本月', u'前月', u'本季']:
                 data_type = u'收益率'
-                index_df.loc[index_code, s + data_type] = d[s]['res'][data_type] if d[s]['res'] is not None and not d[s]['res'].empty else None
+                index_df.loc[index_code, s + data_type] = "{:.2%}".format(d[s]['res'][data_type]) if d[s]['res'] is not None and not d[s]['res'].empty else None
 
             for s in [u'5天', u'本月', u'前月', u'本季']:
                 data_type = u'最大回撤'
-                index_df.loc[index_code, s + data_type] = d[s]['res'][data_type] if d[s]['res'] is not None and not d[s]['res'].empty else None
+                index_df.loc[index_code, s + data_type] = "{:.2f}".format(d[s]['res'][data_type]) if d[s]['res'] is not None and not d[s]['res'].empty else None
 
             for s in [u'本月', u'前月']:
                 data_type = u'收益回撤比'
-                index_df.loc[index_code, s + data_type] = d[s]['res'][data_type] if d[s]['res'] is not None and not d[s]['res'].empty else None
+                # print d[s]['res'], type(d[s]['res'])
+                index_df.loc[index_code, s + data_type] = "{:.2f}".format(d[s]['res'][data_type]) if d[s]['res'] is not None and not d[s]['res'].empty and d[s]['res'][data_type] else None
 
             index_df.to_excel(output_file)
 
@@ -1226,6 +1229,10 @@ class net_value_cal_display(object):
             self.weekly_report()
         elif self.method == 'daily':
             self.daily_report()
+
+    @staticmethod
+    def float_2_percent(self, num):
+        return str(round(num, 4) * 100) + '%'
 
 
 

@@ -57,7 +57,7 @@ cookie0 = {#"cur_ck_time": "1514945128;",
 
 detail_cookie = {
     # "smppw_tz_auth": "1",
-    "http_tK_cache": "15f87621b89053c1e04489ad6e8ba2874442a147",
+    "http_tK_cache": "0c64c99df7fc61b8fe4433b469ff2c9aa46be8a5",
     "passport": "55635%09user_13575486859%09VFJRD1BWBQ9eUFgHBFdUUFdVCwFQBwZUCVVSVlFXUgo%3D9b207ecd5c",
                # 55635%09user_13575486859%09VFJRD1BWBQ9eUFgHBFdUUFdVCwFQBwZUCVVSVlFXUgo%3D9b207ecd5c
     # "cur_ck_time": "1515648448",
@@ -70,7 +70,7 @@ detail_cookie = {
     # "guest_id": "1515845263",
     # "PHPSESSID": "f40f1u4g89nie0eaunebgecn57",
     # "had_quiz_55635%09user_13575486859%09VFJRD1BWBQ9eUFgHBFdUUFdVCwFQBwZUCVVSVlFXUgo%3D9b207ecd5c": "1515648444000",
-    "ck_request_key": "WHRaWwQjUUZ1UQKaWt2Hbn1WwslZQchf6h11LzviR3Q%3D",
+    "ck_request_key": "f5VUox4VuMb7H1lIvONSkzvsGm83GMfIZw3HirVFfb4%3D",
     # "regsms": "1515648423000",
     # "Hm_lvt_c3f6328a1a952e922e996c667234cdae": "1515648423",
     # "fyr_ssid_n5776": "fyr_n5776_jca1xs0m",
@@ -171,23 +171,23 @@ class Spider(scrapy.Spider):
             item0['cookies'] = detail_cookie
             item0['fund_name'] = df.loc[fund_id, 'fund_name']
 
-            # # 产品要素
-            # url = 'http://dc.simuwang.com/fund/getPinfo.html?id=%s&muid=55635' %fund_id
-            # item0['data'] = df.loc[fund_id,:]
-            # yield scrapy.Request(url=url, meta={'item': item0}, cookies=item0['cookies'], callback=self.parse1)
+            # 产品要素
+            url = 'http://dc.simuwang.com/fund/getPinfo.html?id=%s&muid=55635' %fund_id
+            item0['data'] = df.loc[fund_id,:]
+            yield scrapy.Request(url=url, meta={'item': item0}, cookies=item0['cookies'], callback=self.parse1)
 
-            # 历史净值
-            url = "http://dc.simuwang.com/fund/getNavList.html?id=%s&muid=55635&page=1" % fund_id
-            data = requests_manager.get_html(url, cookies=item0['cookies'])
-            json_data = json.loads(data)
-            print json_data
-            print u'基金%s%s有%s页数据' %(fund_id, item0['fund_name'], json_data['pager']['pagecount'])
-            time.sleep(2)
-
-            for i in range(json_data['pager']['pagecount']):
-                url = "http://dc.simuwang.com/fund/getNavList.html?id=%s&muid=55635&page=%s" %(fund_id,i+1)
-                time.sleep(3)
-                yield scrapy.Request(url=url, meta={'item': item0}, cookies=item0['cookies'], callback=self.parse2)
+            # # 历史净值
+            # url = "http://dc.simuwang.com/fund/getNavList.html?id=%s&muid=55635&page=1" % fund_id
+            # data = requests_manager.get_html(url, cookies=item0['cookies'])
+            # json_data = json.loads(data)
+            # print json_data
+            # print u'基金%s%s有%s页数据' %(fund_id, item0['fund_name'], json_data['pager']['pagecount'])
+            # time.sleep(2)
+            #
+            # for i in range(json_data['pager']['pagecount']):
+            #     url = "http://dc.simuwang.com/fund/getNavList.html?id=%s&muid=55635&page=%s" %(fund_id,i+1)
+            #     time.sleep(3)
+            #     yield scrapy.Request(url=url, meta={'item': item0}, cookies=item0['cookies'], callback=self.parse2)
 
     def parse1(self, response):
         item = response.meta['item']
@@ -195,7 +195,23 @@ class Spider(scrapy.Spider):
         df = pd.read_html("<table>%s</table>" %response.text)[0]
         arr = np.array(df).reshape(-1, 2)
         df = pd.DataFrame(arr).set_index(0).T
-        print df.drop([df.columns[-1],], axis=1)
+        # print df.drop([df.columns[-1],], axis=1)
+        df = df.reindex([
+            u"产品名称", u"认购起点", u"投资顾问", u"追加起点", u"基金管理人", u"封闭期", u"基金托管人",
+            u"开放日", u"外包机构方", u"认购费率", u"证券经纪商", u"赎回费率", u"期货经纪商", u"赎回费率说明",
+            u"成立日期", u"管理费率", u"运行状态", u"预警线", u"产品类型", u"止损线", u"初始规模", u"业绩报酬",
+            u"投资策略/子策略", u"存续期限", u"是否分级", u"备案编号", u"是否伞形"
+        ], axis=1)
+
+        file_name = u"私募基金产品要素.xlsx"
+        if not os.path.exists(file_name):
+            pd.DataFrame([]).to_excel(file_name)
+
+        xls_data = pd.read_excel(file_name)
+        xls_data = xls_data.append(df)
+        xls_data.to_excel(file_name, index=None)
+
+        # print xls_data
 
     def parse2(self, response):
         item = response.meta['item']

@@ -20,4 +20,4 @@ if __name__ == '__main__':
     file_path = os.getcwd() + u'/研报/'
     if os.path.exists(file_path):
         shutil.rmtree(file_path)
-    os.system("scrapy crawl 0012 -a file_name=stock_json2.json") # -a date1=2017-10-01 -a date2=2018-01-11
+    os.system("scrapy crawl 0012 -a file_name=stock_json1.json -a date1=2018-01-19") # -a date1=2017-10-01 -a date2=2018-01-11

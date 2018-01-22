@@ -23,8 +23,8 @@ sys.path.append(sys.prefix + "\\Lib\\MyWheels")
 reload(sys)
 sys.setdefaultencoding('utf8')
 import set_log  # log_obj.debug(文本)  "\x1B[1;32;41m (文本)\x1B[0m"
-import csv_report
-csv_report = csv_report.csv_report()
+# import csv_report
+# csv_report = csv_report.csv_report()
 
 log_obj = set_log.Logger(log_path, set_log.logging.WARNING, set_log.logging.DEBUG)
 log_obj.cleanup(log_path, if_cleanup=False)  # 是否需要在每次运行程序前清空Log文件

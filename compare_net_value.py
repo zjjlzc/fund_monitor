@@ -89,15 +89,16 @@ class compare_net_value(object):
         return pd.Series([product_yield, retracement, earnings_retracement_ratio], index=[earnings_type, u'回撤', u'收益回撤比'])
 
 
-    def data_display(self):
-        with open(r'important_fund.json', 'r') as f:
+    def data_display(self, fund_file='weekly_fund.txt'):
+        with open(r'important_fund1.json', 'r') as f:
             fund_code_json = json.load(f, encoding='gbk')
         #fund_code_list = ['001542',]
         date_l = [
             ['2016-12-31', '2017-01-01', '2017-04-19'],
             ['2017-03-31', '2017-04-20', '2017-08-20'],
             ['2017-06-30', '2017-08-21', '2017-10-20'],
-            ['2017-09-30', '2017-10-21', '2020-01-01'],
+            ['2017-09-30', '2017-10-21', '2018-01-18'],
+            ['2017-12-31', '2018-01-19', '2020-01-01'],
         ]
         if os.path.exists(u'compare_net_value_计算过程.csv'):
             os.remove(u'compare_net_value_计算过程.csv')
@@ -336,7 +337,8 @@ class compare_net_value(object):
             # ['2016-09-30', '2016-10-20', '2017-04-19'],
             # ['2017-03-31', '2017-04-20', '2017-08-20'],
             # ['2017-06-30', '2017-08-21', '2017-10-20'],
-            ['2017-09-30', '2017-09-29', datetime.datetime.now().strftime('%Y-%m-%d')],
+            ['2017-09-30', '2017-10-21', '2018-01-18'],
+            ['2017-12-31', '2018-01-19', datetime.datetime.now().strftime('%Y-%m-%d')],
         ]
         if os.path.exists(u'compare_net_value_计算过程.csv'):
             os.remove(u'compare_net_value_计算过程.csv')
@@ -373,9 +375,6 @@ class compare_net_value(object):
 
 
                 rate = ((output_df0[output_df0[u'净值周涨幅']==5])['accumulative_net_value'].astype(np.float) / (output_df0[output_df0[u'净值周涨幅']==5])['accumulative_net_value'].shift(1).astype(np.float) -1).copy()
-                # print (output_df0[output_df0[u'比较']==5])['accumulative_net_value'].astype(np.float)
-                # print (output_df0[output_df0[u'比较']==5])['accumulative_net_value'].shift(1).astype(np.float)
-                # print rate
                 output_df0[u'净值周涨幅'] = rate
                 # print output_df0
 
@@ -527,6 +526,6 @@ class compare_net_value(object):
 
 if __name__ == '__main__':
     compare_net_value = compare_net_value()
-    compare_net_value.data_display()
+    # compare_net_value.data_display()
     # compare_net_value.stock_fitting()
-    # compare_net_value.daily_display()
+    compare_net_value.daily_display('important_fund2.txt')

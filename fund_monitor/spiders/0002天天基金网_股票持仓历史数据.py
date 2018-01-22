@@ -51,7 +51,8 @@ class Spider(scrapy.Spider):
 
     def parse00(self, response):
         try:
-            with open('important_fund.txt','r') as f:
+            # with open('important_fund.txt','r') as f:
+            with open('weekly_fund.txt', 'r') as f:
                 l = f.read().split('\n')
 
             for fund_code in l:
@@ -176,7 +177,7 @@ class Spider(scrapy.Spider):
                 df0 = df0.drop([u'序号', u'相关资讯', u'最新价', u'涨跌幅'], axis=1, errors='ignore')
                 df0[u'crawler_key'] = df0[u'fund_code'] + u'/' + df0[u'stock_code'] + u'/' + df0[u'cut_off_date']
 
-                mysql_connecter.insert_df_data(df0, u'fund_holdings')
+                mysql_connecter.insert_df_data(df0, u'fund_holdings', method='UPDATE')
 
 
 

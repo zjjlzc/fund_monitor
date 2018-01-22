@@ -79,14 +79,13 @@ class report_output(object):
                 df.iloc[:, i] = df.iloc[:, i].apply(lambda s:datetime.datetime.strptime(s, '%Y-%m-%d').date() if not isinstance(s, type(np.nan)) else np.nan)
         # print df
         df.to_excel(writer, u'净值拟合数据')
-        # os.remove(compare_net_value2)
 
         # fund_holdings_display = self.fund_holdings_display.display_all(fund_file)
         #
         # df = pd.read_csv(fund_holdings_display, index_col=None)
         # df.columns = ['' if re.search(r'Unnamed', s) else s for s in df.columns]
         # df.to_excel(writer, u'热点基金持股明细表', index=None)
-        # # os.remove(fund_holdings_display)
+        # os.remove(fund_holdings_display)
 
         writer.save()
         # 163212
@@ -97,4 +96,5 @@ class report_output(object):
 
 if __name__ == '__main__':
     report_output = report_output()
-    report_output.daily_report('important_fund2.txt')
+    # report_output.daily_report('important_fund.txt')
+    report_output.daily_report('weekly_fund.txt')  # C:\Users\Administrator\Desktop\fund_monitor\weekly_fund.txt

@@ -58,6 +58,7 @@ class calculation(object):
 
         df = df.dropna()  # 剔除目标字段中的空值行
         df = df[df[value_col].astype(np.str) != ''].copy() # 剔除目标字段中的空白字符
+
         df.loc[:, date_col] = pd.to_datetime(df.loc[:, date_col]) # 将日期列的字符串转为日期
 
         # 截取所需时间内的数据,数据取到小于date1的最后一个

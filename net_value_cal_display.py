@@ -182,8 +182,12 @@ class net_value_cal_display(object):
         global date_ser
         global last_date
         # last_friday = max([date for date in date_ser if date.isoweekday()==5]) #  datetime.datetime(year=2017, month=10, day=31) #
-        last_week_num = (last_date - relativedelta(weeks=1)).isocalendar()[1]
+        if datetime.datetime.now().isoweekday() > 5:
+            last_week_num = last_date.isocalendar()[1]
+        else:
+            last_week_num = (last_date - relativedelta(weeks=1)).isocalendar()[1]
         last_friday = max([date for date in date_ser if date.isocalendar()[1] == last_week_num])
+        last_friday = datetime.datetime(year=2018, month=1, day=19)
         date_ser = date_ser[date_ser<=last_friday]
         print u'weekly_report =>周报截止日期为', last_friday
 
@@ -1230,9 +1234,129 @@ class net_value_cal_display(object):
         elif self.method == 'daily':
             self.daily_report()
 
-    @staticmethod
-    def float_2_percent(self, num):
-        return str(round(num, 4) * 100) + '%'
+    def privately_offered_fund(self):
+        file_path = u"C:\\Users\\Administrator\\Desktop\\私募基金数据\\"
+        title = [u"主策略", u"子策略", u"产品名称", u"管理人", u"成立日期", u"最新日期", u"最新净值",
+                 u"成立以来年化收益率", u"成立以来最大回撤", u"2017年收益率", u"2017年回撤", u"来源", u"尽调进程", u"备注"]
+        output_df = pd.DataFrame([], columns=title)
+        res = {}
+        for dir_name in os.listdir(file_path):
+            data_type = dir_name.split('_')[-1]
+
+            # 计算汇总表
+            for file_name in os.listdir(file_path+dir_name):
+                df = pd.read_excel(file_path+dir_name+'\\'+file_name)
+                df[u'日期'] = pd.to_datetime(df[u'日期']).apply(lambda date:date.date())
+                df = df.sort_values([u'日期',]) # , ascending=False)
+                newest_date = df[u'日期'].max()
+
+                product_name = os.path.splitext(file_name)[0]
+
+                func = lambda date1, date2: calculation.earnings_cal(file_name, df, date1=date1, date2=date2,
+                                                                     date_col=u'日期', value_col=u'累计净值(分红不投资)', data_type='fund')
+
+                ser1 = func(datetime.datetime(year=1990, month=1, day=1), datetime.datetime.now())
+                ser2 = func(datetime.datetime(year=2017, month=1, day=1), datetime.datetime(year=2017, month=12, day=31))
+                output_df = output_df.append({
+                    u"主策略":data_type,
+                    u"产品名称": product_name,
+                    u"最新日期": newest_date,
+                    u"最新净值": df[df[u'日期']==newest_date][u'累计净值(分红不投资)'].iloc[0],
+                    u"成立以来年化收益率":ser1.loc[u'年化收益率'],
+                    u"成立以来最大回撤":ser1.loc[u'最大回撤'],
+                    u"2017年收益率":ser2.loc[u'年化收益率'],
+                    u"2017年回撤":ser2.loc[u'最大回撤'],
+                }, ignore_index=True)
+
+                detail_d = {
+                    u"data":df,
+                    u"成立以来":ser1,
+                    u"2017年":ser2,
+                    u"区间统计":{
+                        u"2015年":func(datetime.datetime(year=2015, month=1, day=1), datetime.datetime(year=2015, month=12, day=31)),
+                        u"2016年": func(datetime.datetime(year=2016, month=1, day=1), datetime.datetime(year=2016, month=12, day=31)),
+                        u"2017年1月": func(datetime.datetime(year=2017, month=1, day=1), datetime.datetime(year=2017, month=2, day=1) - datetime.timedelta(days=1)),
+                        u"2017年2月": func(datetime.datetime(year=2017, month=2, day=1), datetime.datetime(year=2017, month=3, day=1) - datetime.timedelta(days=1)),
+                        u"2017年3月": func(datetime.datetime(year=2017, month=3, day=1), datetime.datetime(year=2017, month=4, day=1) - datetime.timedelta(days=1)),
+                        u"2017年4月": func(datetime.datetime(year=2017, month=4, day=1), datetime.datetime(year=2017, month=5, day=1) - datetime.timedelta(days=1)),
+                        u"2017年5月": func(datetime.datetime(year=2017, month=5, day=1), datetime.datetime(year=2017, month=6, day=1) - datetime.timedelta(days=1)),
+                        u"2017年6月": func(datetime.datetime(year=2017, month=6, day=1), datetime.datetime(year=2017, month=7, day=1) - datetime.timedelta(days=1)),
+                        u"2017年7月": func(datetime.datetime(year=2017, month=7, day=1), datetime.datetime(year=2017, month=8, day=1) - datetime.timedelta(days=1)),
+                        u"2017年8月": func(datetime.datetime(year=2017, month=8, day=1), datetime.datetime(year=2017, month=9, day=1) - datetime.timedelta(days=1)),
+                        u"2017年9月": func(datetime.datetime(year=2017, month=9, day=1), datetime.datetime(year=2017, month=10, day=1) - datetime.timedelta(days=1)),
+                        u"2017年10月": func(datetime.datetime(year=2017, month=10, day=1), datetime.datetime(year=2017, month=11, day=1) - datetime.timedelta(days=1)),
+                        u"2017年11月": func(datetime.datetime(year=2017, month=11, day=1), datetime.datetime(year=2017, month=12, day=1) - datetime.timedelta(days=1)),
+                        u"2017年12月": func(datetime.datetime(year=2017, month=12, day=1), datetime.datetime(year=2018, month=1, day=1) - datetime.timedelta(days=1)),
+                    }
+                }
+                res[product_name] = detail_d
+
+
+        output_df = output_df.sort_values([u"主策略", u"2017年收益率",], ascending=False)
+        for s in [u"成立以来年化收益率", u"成立以来最大回撤", u"2017年收益率", u"2017年回撤"]:
+            output_df[s] = output_df[s].apply(lambda num: "{:0.2%}".format(num))
+
+        writer = pd.ExcelWriter(u"私募排排网数据.xlsx")
+
+        # output_df.to_excel(writer, u"汇总表", index=None)
+        df0 = pd.DataFrame([])
+        for data_type in output_df[u"主策略"].drop_duplicates():
+            df0 = df0.append(output_df[output_df[u"主策略"] == data_type].head(10))
+        df0.to_excel(writer, u"汇总表", index=None)
+
+        for data_type in output_df[u"主策略"].drop_duplicates():
+            data_list = output_df[output_df[u"主策略"] == data_type].head(10)[u"产品名称"].tolist() # 每个策略的前十个产品
+            for product in data_list:
+                df = res[product][u"data"]
+                # print res[product]
+
+                df = df.drop([u'基金名称',], axis=1)
+                df = df.reindex(columns=[u'日期', u'单位净值', u'累计净值(分红再投资)', u'累计净值(分红不投资)', u'净值变动'])
+
+                # 插入统计数据
+                func = lambda l:df.append(pd.Series(dict(zip(list(df.columns), l))), ignore_index=True)
+                df = func(['',])
+                df = func([u"成立以来",u"年化收益率",u"最大回撤",u"收益回撤比"])
+                ser = res[product][u"成立以来"]
+                if ser.empty:
+                    df = func(['', ])
+                else:
+                    df = func([u"", "{:.2%}".format(ser[u"年化收益率"]) if ser[u"年化收益率"] else None,
+                                    "{:.2%}".format(ser[u"最大回撤"]) if ser[u"最大回撤"] else None,
+                                    "{:.4f}".format(ser[u"收益回撤比"]) if ser[u"收益回撤比"] else None
+                               ])
+
+                df = func(['',])
+                df = func([u"2017年", u"收益率", u"最大回撤", u"收益回撤比"])
+                ser = res[product][u"2017年"]
+                if ser.empty:
+                    df = func(['', ])
+                else:
+                    df = func([u"", "{:.2%}".format(ser[u"收益率"]) if ser[u"收益率"] else None,
+                                    "{:.2%}".format(ser[u"最大回撤"]) if ser[u"最大回撤"] else None,
+                                    "{:.4f}".format(ser[u"收益回撤比"]) if ser[u"收益回撤比"] else None
+                               ])
+                df = func(['', ])
+                df = func([u"区间统计", u"收益率", u"最大回撤", u"收益回撤比"])
+
+                for key in [u"2015年",u"2016年",u"2017年1月",u"2017年2月",u"2017年3月",u"2017年4月",u"2017年5月",u"2017年6月",u"2017年7月",
+                           u"2017年8月",u"2017年9月",u"2017年10月",u"2017年11月",u"2017年12月"]:
+                    ser = res[product][u"区间统计"][key]
+                    if ser.empty:
+                        df = func([key,])
+                    else:
+                        # print ser[u"收益回撤比"]
+                        # print type(ser[u"收益回撤比"])
+                        df = func([key, "{:.2%}".format(ser[u"收益率"]) if ser[u"收益率"] else None,
+                                        "{:.2%}".format(ser[u"最大回撤"]) if ser[u"最大回撤"] else None,
+                                        "{:.4f}".format(ser[u"收益回撤比"]) if ser[u"收益回撤比"] else None
+                                   ])
+
+
+
+                df.to_excel(writer, "%s_%s" %(data_type, product), index=None)
+
+        writer.save()
 
 
 
@@ -1245,5 +1369,6 @@ if __name__ == '__main__':
     # net_value_cal_display.date_range_display()
     # net_value_cal_display.special_fund()
 
+    # net_value_cal_display.privately_offered_fund()
 # http://dcfm.eastmoney.com//em_mutisvcexpandinterface/api/js/get?type=HSGTHDSTA&token=70f12f2f4f091e459a279469fe49eca5&filter=(SCODE=%27000063%27)&st=HDDATE&sr=-1&p=1&ps=50&js=var%20ANuhNwTP={pages:(tp),data:(x)}&rt=50437829
 # http://dcfm.eastmoney.com//em_mutisvcexpandinterface/api/js/get?type=HSGTHDSTA&token=1942f5da9b46b069953c873404aad4b5&filter=(SCODE=000063)&st=HDDATE&sr=-1&p=1&ps=1000

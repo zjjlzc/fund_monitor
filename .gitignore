@@ -148,3 +148,10 @@ $RECYCLE.BIN/
 *.db
 # CSV files
 *.csv
+# Excel files
+*.xlsx
+*.xls
+
+# others
+*.pdf
+*.twb

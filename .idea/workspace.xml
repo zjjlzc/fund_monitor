@@ -1,0 +1,1000 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="8041e7be-4f10-4305-beb9-483d5f8d823b" name="Default" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="research_report.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/research_report.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="320">
+              <caret line="20" column="33" lean-forward="false" selection-start-line="20" selection-start-column="32" selection-end-line="20" selection-end-column="33" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="net_value_cal_display.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/net_value_cal_display.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="224">
+              <caret line="1299" column="80" lean-forward="true" selection-start-line="1299" selection-start-column="80" selection-end-line="1299" selection-end-column="80" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="calculation.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/calculation.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1568">
+              <caret line="98" column="86" lean-forward="false" selection-start-line="98" selection-start-column="79" selection-end-line="98" selection-end-column="86" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>cookie0</find>
+      <find>request_parameters</find>
+      <find>date</find>
+      <find>file_name</find>
+      <find>股票池结构</find>
+      <find>stock_list</find>
+      <find>cookies</find>
+      <find>token</find>
+      <find>第一页数据长度</find>
+      <find>get_data</find>
+      <find>date_today</find>
+      <find>last_friday</find>
+      <find>self.daily_report_date</find>
+      <find>CONCURRENT_REQUESTS</find>
+      <find>比较</find>
+      <find>周五净值增幅</find>
+      <find>np</find>
+      <find>net_value_df</find>
+      <find />
+      <find>u'日期'</find>
+      <find>res[product][u&quot;区间统计&quot;][key]</find>
+      <find>res[product][u&quot;2017年&quot;]</find>
+      <find>res[product][u&quot;成立以来&quot;]</find>
+      <find>001878</find>
+      <find>mysql_connecter</find>
+      <find>title_set</find>
+      <find>simple_cal</find>
+      <find>get_net_value</find>
+      <find>estimate_vs_fitting</find>
+      <find>single_fitting_net_value</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>eastmoney_daily_data</replace>
+      <replace>net_value_df</replace>
+      <replace>plate_code</replace>
+      <replace>output_file</replace>
+      <replace>fund_holdings_display</replace>
+      <replace>index_df</replace>
+      <replace>fund_code</replace>
+      <replace>last_friday</replace>
+      <replace>,</replace>
+      <replace>datetime.datetime.now()</replace>
+      <replace>sz50</replace>
+      <replace>fund_holding</replace>
+      <replace>stock_belonging</replace>
+      <replace>fund_info</replace>
+      <replace>ser1</replace>
+      <replace>ser2</replace>
+      <replace>',u'</replace>
+      <replace>&quot;:&quot;</replace>
+      <replace>;\n</replace>
+      <replace>[i]</replace>
+      <replace>j</replace>
+      <replace>2017</replace>
+      <replace>'</replace>
+      <replace>self.stock_list</replace>
+      <replace>last_date</replace>
+      <replace>净值周涨幅</replace>
+      <replace>,u&quot;</replace>
+      <replace>&quot;,u&quot;</replace>
+      <replace>'日期'</replace>
+      <replace>ser</replace>
+    </replaceStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/stock_fitting.py" />
+        <option value="$PROJECT_DIR$/stock_fitting_data.json" />
+        <option value="$PROJECT_DIR$/important_fund.json" />
+        <option value="$PROJECT_DIR$/important_fund1.txt" />
+        <option value="$PROJECT_DIR$/fund_monitor/spiders/0006东方财富网_股票分类.py" />
+        <option value="$PROJECT_DIR$/daily_spider.bat" />
+        <option value="$PROJECT_DIR$/trading_detail.csv" />
+        <option value="$PROJECT_DIR$/fund_monitor/mock_trading.py" />
+        <option value="$PROJECT_DIR$/mock_trading.py" />
+        <option value="$PROJECT_DIR$/fund_monitor/spiders/0005东方财富网_历史资金流.py" />
+        <option value="$PROJECT_DIR$/api51.py" />
+        <option value="$PROJECT_DIR$/fund_monitor/spiders/0003天天基金网_基金阶段数据.py" />
+        <option value="$PROJECT_DIR$/fund_holdings_display.py" />
+        <option value="$PROJECT_DIR$/important_fund1.json" />
+        <option value="$PROJECT_DIR$/fund_monitor/spiders/0008青青花木网.py" />
+        <option value="$PROJECT_DIR$/fund_monitor/spiders/0009东方财富网_历史资金流.py" />
+        <option value="$PROJECT_DIR$/stock_list4.txt" />
+        <option value="$PROJECT_DIR$/stock_list5.txt" />
+        <option value="$PROJECT_DIR$/stock_list3.txt" />
+        <option value="$PROJECT_DIR$/stock_list2.txt" />
+        <option value="$PROJECT_DIR$/stock_list1.txt" />
+        <option value="$PROJECT_DIR$/stock_list.txt" />
+        <option value="$PROJECT_DIR$/stock_capital_flow.py" />
+        <option value="$PROJECT_DIR$/special_fund.json" />
+        <option value="$PROJECT_DIR$/fund_monitor/spiders/0011东方财富网_两市合计融资融券历史数据.py" />
+        <option value="C:/Python27/Lib/MyWheels/driver_manager.py" />
+        <option value="$PROJECT_DIR$/fund_monitor/items.py" />
+        <option value="$PROJECT_DIR$/股票池结构.json" />
+        <option value="$PROJECT_DIR$/fund_monitor/spiders/0013搜狗_微信.py" />
+        <option value="$PROJECT_DIR$/fund_monitor/spiders/0011巨潮资讯网.py" />
+        <option value="$PROJECT_DIR$/weichat.py" />
+        <option value="$PROJECT_DIR$/stock_json2.json" />
+        <option value="$PROJECT_DIR$/fund_monitor/spiders/0012东方财富网_研报.py" />
+        <option value="$PROJECT_DIR$/fund_monitor/settings.py" />
+        <option value="$PROJECT_DIR$/fund_monitor/spiders/0014中国园林网.py" />
+        <option value="$PROJECT_DIR$/weekly_fund2.txt" />
+        <option value="$PROJECT_DIR$/important_fund2.txt" />
+        <option value="$PROJECT_DIR$/stock_json1.json" />
+        <option value="$PROJECT_DIR$/calculation.py" />
+        <option value="$PROJECT_DIR$/fund_monitor/pipelines.py" />
+        <option value="$PROJECT_DIR$/important_fund.txt" />
+        <option value="$PROJECT_DIR$/fund_monitor/spiders/0001天天基金网_基金每日数据.py" />
+        <option value="$PROJECT_DIR$/fund_monitor/spiders/0002天天基金网_股票持仓历史数据.py" />
+        <option value="$PROJECT_DIR$/fund_monitor/spiders/0007私募排排网.py" />
+        <option value="$PROJECT_DIR$/test_spider.py" />
+        <option value="$PROJECT_DIR$/compare_net_value.py" />
+        <option value="$PROJECT_DIR$/cal_fitting_net_value.py" />
+        <option value="$PROJECT_DIR$/report_output.py" />
+        <option value="$PROJECT_DIR$/stock_json3.json" />
+        <option value="$PROJECT_DIR$/research_report.py" />
+        <option value="$PROJECT_DIR$/net_value_cal_display.py" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-8" />
+    <option name="width" value="1378" />
+    <option name="height" value="744" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+          <State>
+            <id>General</id>
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>General</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="fund_monitor" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fund_monitor" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="fund_monitor" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fund_monitor" type="462c0819:PsiDirectoryNode" />
+              <item name="fund_monitor" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="fund_monitor" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fund_monitor" type="462c0819:PsiDirectoryNode" />
+              <item name="fund_monitor" type="462c0819:PsiDirectoryNode" />
+              <item name="commands" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="fund_monitor" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fund_monitor" type="462c0819:PsiDirectoryNode" />
+              <item name="fund_monitor" type="462c0819:PsiDirectoryNode" />
+              <item name="spiders" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scratches" />
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="settings.editor.selected.configurable" value="settings.github" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../fund_monitor3" />
+    <property name="ToolWindowRun.ShowToolbar" value="false" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Administrator\Desktop\fund_monitor" />
+      <recent name="C:\Users\Administrator\Desktop\fund_monitor\fund_monitor\spiders" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Administrator\Desktop\fund_monitor" />
+      <recent name="C:\Users\Administrator\Desktop\fund_monitor\fund_monitor" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Python.net_value_cal_display">
+    <configuration name="compare_net_value" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="fund_monitor" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/compare_net_value.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="net_value_cal_display" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="fund_monitor" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/net_value_cal_display.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="report_output" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="fund_monitor" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/report_output.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="research_report" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="fund_monitor" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/research_report.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="test_spider" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="fund_monitor" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test_spider.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <list size="5">
+      <item index="0" class="java.lang.String" itemvalue="Python.test_spider" />
+      <item index="1" class="java.lang.String" itemvalue="Python.report_output" />
+      <item index="2" class="java.lang.String" itemvalue="Python.research_report" />
+      <item index="3" class="java.lang.String" itemvalue="Python.net_value_cal_display" />
+      <item index="4" class="java.lang.String" itemvalue="Python.compare_net_value" />
+    </list>
+    <recent_temporary>
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="Python.net_value_cal_display" />
+        <item index="1" class="java.lang.String" itemvalue="Python.research_report" />
+        <item index="2" class="java.lang.String" itemvalue="Python.report_output" />
+        <item index="3" class="java.lang.String" itemvalue="Python.test_spider" />
+        <item index="4" class="java.lang.String" itemvalue="Python.compare_net_value" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration>C:\Users\lenovo\AppData\Roaming\Subversion</configuration>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8041e7be-4f10-4305-beb9-483d5f8d823b" name="Default" comment="" />
+      <created>1510626898762</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1510626898762</updated>
+    </task>
+    <task id="LOCAL-00001" summary="微调">
+      <created>1510743053151</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1510743053152</updated>
+    </task>
+    <task id="LOCAL-00002" summary="更新上传数据库">
+      <created>1510743068481</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1510743068481</updated>
+    </task>
+    <task id="LOCAL-00003" summary="更新">
+      <created>1510887436235</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1510887436235</updated>
+    </task>
+    <task id="LOCAL-00004" summary="更新">
+      <created>1511417856895</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1511417856895</updated>
+    </task>
+    <task id="LOCAL-00005" summary="更新">
+      <created>1511491551087</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1511491551087</updated>
+    </task>
+    <task id="LOCAL-00006" summary="更新">
+      <created>1511921003967</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1511921003967</updated>
+    </task>
+    <task id="LOCAL-00007" summary="更新">
+      <created>1512188472683</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1512188472683</updated>
+    </task>
+    <task id="LOCAL-00008" summary="更新">
+      <created>1512353842457</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1512353842457</updated>
+    </task>
+    <task id="LOCAL-00009" summary="更新">
+      <created>1512367750959</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1512367750959</updated>
+    </task>
+    <task id="LOCAL-00010" summary="更新">
+      <created>1512381403159</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1512381403159</updated>
+    </task>
+    <task id="LOCAL-00011" summary="更新">
+      <created>1512521562437</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1512521562437</updated>
+    </task>
+    <task id="LOCAL-00012" summary="更新">
+      <created>1513049655710</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1513049655710</updated>
+    </task>
+    <task id="LOCAL-00013" summary="更新">
+      <created>1513063858927</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1513063858927</updated>
+    </task>
+    <task id="LOCAL-00014" summary="更新">
+      <created>1513070331525</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1513070331525</updated>
+    </task>
+    <task id="LOCAL-00015" summary="更新">
+      <created>1513936566449</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1513936566449</updated>
+    </task>
+    <task id="LOCAL-00016" summary="更新">
+      <created>1514258728333</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1514258728333</updated>
+    </task>
+    <task id="LOCAL-00017" summary="更新">
+      <created>1514278311924</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1514278311924</updated>
+    </task>
+    <task id="LOCAL-00018" summary="更新">
+      <created>1515565614629</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1515565614629</updated>
+    </task>
+    <task id="LOCAL-00019" summary="更新">
+      <created>1515735694158</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1515735694158</updated>
+    </task>
+    <task id="LOCAL-00020" summary="更新">
+      <created>1515750882588</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1515750882588</updated>
+    </task>
+    <task id="LOCAL-00021" summary="更新">
+      <created>1516259073488</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1516259073488</updated>
+    </task>
+    <task id="LOCAL-00022" summary="更新">
+      <created>1516591187307</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1516591187307</updated>
+    </task>
+    <task id="LOCAL-00023" summary="更新">
+      <created>1516669437111</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1516669437111</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
+    <servers />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13645943" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32900432" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32900432" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.38528138" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.36580086" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32792208" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3982684" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32900432" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ORDER">
+      <list>
+        <option value="0" />
+        <option value="2" />
+        <option value="3" />
+        <option value="1" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
+              <option name="COLUMN_ORDER">
+                <list>
+                  <option value="0" />
+                  <option value="1" />
+                  <option value="2" />
+                  <option value="3" />
+                </list>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="微调" />
+    <MESSAGE value="更新上传数据库" />
+    <MESSAGE value="更新" />
+    <option name="LAST_COMMIT_MESSAGE" value="更新" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints-dialog>
+        <breakpoints-dialog />
+      </breakpoints-dialog>
+      <option name="time" value="2" />
+    </breakpoint-manager>
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://C:/Python27/Lib/site-packages/scrapy/crawler.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="124">
+          <caret line="77" column="0" lean-forward="false" selection-start-line="77" selection-start-column="0" selection-end-line="77" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test.html" />
+    <entry file="file://$PROJECT_DIR$/stock_list1.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/stock_list.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="447">
+          <caret line="49" column="6" lean-forward="true" selection-start-line="49" selection-start-column="6" selection-end-line="49" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/stock_capital_flow.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1872">
+          <caret line="117" column="21" lean-forward="true" selection-start-line="117" selection-start-column="21" selection-end-line="117" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fund_monitor/spiders/0010朝阳永续.py" />
+    <entry file="file://$PROJECT_DIR$/fund_monitor/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fund_monitor/spiders/0008青青花木网.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="291">
+          <caret line="69" column="24" lean-forward="false" selection-start-line="69" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fund_monitor/spiders/0005东方财富网_历史资金流.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="83">
+          <caret line="62" column="36" lean-forward="true" selection-start-line="62" selection-start-column="36" selection-end-line="62" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fund_monitor/spiders/0009东方财富网_历史资金流.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="309">
+          <caret line="64" column="36" lean-forward="true" selection-start-line="64" selection-start-column="12" selection-end-line="64" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fund_monitor/spiders/0010朝阳永续网.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="59" column="42" lean-forward="true" selection-start-line="59" selection-start-column="42" selection-end-line="59" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fund_monitor/commands/monitor.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-432">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Python27/Lib/site-packages/Twisted-17.9.0-py2.7-win-amd64.egg/twisted/internet/defer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="167">
+          <caret line="1385" column="0" lean-forward="false" selection-start-line="1385" selection-start-column="0" selection-end-line="1385" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Python27/Lib/site-packages/pandas/core/indexes/base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-9">
+          <caret line="2523" column="0" lean-forward="false" selection-start-line="2523" selection-start-column="0" selection-end-line="2523" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/special_fund.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="535">
+          <caret line="34" column="25" lean-forward="true" selection-start-line="34" selection-start-column="25" selection-end-line="34" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fund_monitor/spiders/0011东方财富网_两市合计融资融券历史数据.py" />
+    <entry file="file://C:/Python27/Lib/MyWheels/driver_manager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="72" column="8" lean-forward="false" selection-start-line="72" selection-start-column="8" selection-end-line="72" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/股票池结构.json" />
+    <entry file="file://$PROJECT_DIR$/fund_monitor/spiders/0004天天基金网_基金信息.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="78" column="67" lean-forward="true" selection-start-line="78" selection-start-column="67" selection-end-line="78" selection-end-column="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fund_monitor/spiders/0006东方财富网_股票分类.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="777">
+          <caret line="85" column="61" lean-forward="false" selection-start-line="85" selection-start-column="42" selection-end-line="85" selection-end-column="61" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fund_monitor/items.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="19" column="8" lean-forward="false" selection-start-line="19" selection-start-column="4" selection-end-line="19" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fund_monitor/spiders/0011巨潮资讯网.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="273">
+          <caret line="107" column="0" lean-forward="false" selection-start-line="107" selection-start-column="0" selection-end-line="107" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/daily_spider.bat">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fund_monitor/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="134">
+          <caret line="45" column="23" lean-forward="false" selection-start-line="45" selection-start-column="23" selection-end-line="45" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/weichat.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-784">
+          <caret line="20" column="11" lean-forward="false" selection-start-line="20" selection-start-column="11" selection-end-line="20" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/weekly_fund2.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="48">
+          <caret line="3" column="6" lean-forward="false" selection-start-line="3" selection-start-column="6" selection-end-line="3" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/important_fund1.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fund_monitor/spiders/0013搜狗_微信.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="448">
+          <caret line="46" column="21" lean-forward="false" selection-start-line="46" selection-start-column="5" selection-end-line="46" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fund_monitor/spiders/0014中国园林网.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="503">
+          <caret line="72" column="0" lean-forward="false" selection-start-line="72" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/stock_json2.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="112">
+          <caret line="7" column="18" lean-forward="false" selection-start-line="7" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fund_monitor/pipelines.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="166">
+          <caret line="27" column="0" lean-forward="true" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/important_fund.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="192">
+          <caret line="12" column="6" lean-forward="true" selection-start-line="12" selection-start-column="6" selection-end-line="12" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fund_monitor/spiders/0003天天基金网_基金阶段数据.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1425">
+          <caret line="65" column="48" lean-forward="true" selection-start-line="65" selection-start-column="8" selection-end-line="65" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/weekly_fund.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="211">
+          <caret line="103" column="6" lean-forward="true" selection-start-line="103" selection-start-column="6" selection-end-line="103" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fund_monitor/spiders/0002天天基金网_股票持仓历史数据.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="594">
+          <caret line="68" column="32" lean-forward="true" selection-start-line="68" selection-start-column="32" selection-end-line="68" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Python27/Lib/site-packages/pandas/core/frame.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="2132" column="0" lean-forward="false" selection-start-line="2132" selection-start-column="0" selection-end-line="2132" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fund_monitor/spiders/0007私募排排网.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="841">
+          <caret line="209" column="43" lean-forward="false" selection-start-line="209" selection-start-column="43" selection-end-line="209" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fund_monitor/spiders/0012东方财富网_研报.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="960">
+          <caret line="93" column="56" lean-forward="false" selection-start-line="93" selection-start-column="56" selection-end-line="93" selection-end-column="56" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fund_holdings_display.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1296">
+          <caret line="78" column="26" lean-forward="true" selection-start-line="78" selection-start-column="26" selection-end-line="78" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/important_fund1.json" />
+    <entry file="file://$PROJECT_DIR$/important_fund2.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="16">
+          <caret line="1" column="6" lean-forward="false" selection-start-line="1" selection-start-column="6" selection-end-line="1" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/compare_net_value.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="112">
+          <caret line="130" column="0" lean-forward="true" selection-start-line="130" selection-start-column="0" selection-end-line="130" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cal_fitting_net_value.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="416">
+          <caret line="284" column="18" lean-forward="true" selection-start-line="284" selection-start-column="18" selection-end-line="284" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/stock_json1.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="800">
+          <caret line="53" column="20" lean-forward="true" selection-start-line="53" selection-start-column="20" selection-end-line="53" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_spider.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="320">
+          <caret line="20" column="36" lean-forward="false" selection-start-line="20" selection-start-column="36" selection-end-line="20" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fund_monitor/spiders/0001天天基金网_基金每日数据.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="297">
+          <caret line="52" column="48" lean-forward="false" selection-start-line="52" selection-start-column="48" selection-end-line="52" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/stock_json3.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="80">
+          <caret line="5" column="16" lean-forward="false" selection-start-line="5" selection-start-column="16" selection-end-line="5" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/report_output.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="496">
+          <caret line="57" column="74" lean-forward="true" selection-start-line="57" selection-start-column="74" selection-end-line="57" selection-end-column="74" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/research_report.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="320">
+          <caret line="20" column="33" lean-forward="false" selection-start-line="20" selection-start-column="32" selection-end-line="20" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/calculation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1568">
+          <caret line="98" column="86" lean-forward="false" selection-start-line="98" selection-start-column="79" selection-end-line="98" selection-end-column="86" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/net_value_cal_display.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="224">
+          <caret line="1299" column="80" lean-forward="true" selection-start-line="1299" selection-start-column="80" selection-end-line="1299" selection-end-column="80" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ScopeChooserConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>

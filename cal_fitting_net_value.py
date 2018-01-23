@@ -284,44 +284,44 @@ class cal_fitting_net_value(object):
         # print ser
         return ser
 
-    def single_fitting_net_value(self, stock_list, date_str1, date_str2):
-        """
-        stock_list = {
-        '600519': 0.0857,
-        '000568': 0.0819,
-        '601318': 0.0810,
-        '000858': 0.0782,
-        '601398': 0.0780,
-        '601601': 0.0778,
-        '600036': 0.0734,
-        '601288': 0.0720,
-        '601688': 0.0421,
-        '600809': 0.0356
-        }
-        返回一个拟合净值
-
-        """
-
-        ser = None
-        for stock_code in stock_list:
-            value_ratio = stock_list[stock_code]
-            #print 'value_ratio', value_ratio
-            print u'计算股票%s' % stock_code
-            res = self.cal_stock(stock_code, date_str1, date_str2)
-            res = res.fillna(method = 'ffill')
-            if res is None:
-                return None
-
-            if ser is None:
-                ser = res['cal_value'] * value_ratio  # 根据基金持仓比例计算个股每日的折算净值
-            else:
-                ser = ser + res['cal_value'] * value_ratio
-        return ser
+    # def single_fitting_net_value(self, stock_list, date_str1, date_str2):
+    #     """
+    #     stock_list = {
+    #     '600519': 0.0857,
+    #     '000568': 0.0819,
+    #     '601318': 0.0810,
+    #     '000858': 0.0782,
+    #     '601398': 0.0780,
+    #     '601601': 0.0778,
+    #     '600036': 0.0734,
+    #     '601288': 0.0720,
+    #     '601688': 0.0421,
+    #     '600809': 0.0356
+    #     }
+    #     返回一个拟合净值
+    #
+    #     """
+    #
+    #     ser = None
+    #     for stock_code in stock_list:
+    #         value_ratio = stock_list[stock_code]
+    #         #print 'value_ratio', value_ratio
+    #         print u'计算股票%s' % stock_code
+    #         res = self.cal_stock(stock_code, date_str1, date_str2)
+    #         res = res.fillna(method = 'ffill')
+    #         if res is None:
+    #             return None
+    #
+    #         if ser is None:
+    #             ser = res['cal_value'] * value_ratio  # 根据基金持仓比例计算个股每日的折算净值
+    #         else:
+    #             ser = ser + res['cal_value'] * value_ratio
+    #     return ser
 
 
 if __name__ == '__main__':
     cal_fitting_net_value = cal_fitting_net_value()
-    # code_list =['001542','000457']
+    # code_list = ['001542','000457']
     # # 截止日期， 股票取值起始日期， 股票取值截止日期
     # date_l = [
     #     ['2016-09-30', '2016-10-20', '2017-04-19'],

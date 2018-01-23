@@ -40,7 +40,7 @@ class report_output(object):
 
     def daily_report(self, fund_file):
         start_time = time.time()
-        file_name = u'%s日报.xls' %datetime.datetime.now().strftime(u'%Y-%m-%d-')
+        file_name = u'%s日报.xlsx' %datetime.datetime.now().strftime(u'%Y-%m-%d-')
         if os.path.exists(file_name):
             os.remove(file_name)
             wb = xlwt.Workbook()
@@ -96,5 +96,5 @@ class report_output(object):
 
 if __name__ == '__main__':
     report_output = report_output()
-    # report_output.daily_report('important_fund.txt')
-    report_output.daily_report('weekly_fund.txt')  # C:\Users\Administrator\Desktop\fund_monitor\weekly_fund.txt
+    report_output.daily_report('important_fund.txt')
+    # report_output.daily_report('weekly_fund.txt')  # C:\Users\Administrator\Desktop\fund_monitor\weekly_fund.txt

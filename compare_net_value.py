@@ -59,34 +59,34 @@ class compare_net_value(object):
         return df
 
 
-    def simple_cal(self, ser, earnings_type):
-        if ser is None:
-            return None
-        df = pd.DataFrame(ser)
-        df['max'] = ''
-        df['target_col'] = ''
-        print df.shape
-        func_max = lambda date: max(df.iloc[:,0][df.index <= date])
-        for i in range(1, df.shape[0]):
-            value0 = df.iloc[i, 0]
-            date0 = df.index[i]
-            df.iloc[i, 1] = func_max(date0)
-            if value0 < func_max(date0):
-                df.iloc[i, 2] = (value0 / func_max(date0)) - 1
-            else:
-                df.iloc[i, 2] = 0
-
-
-        if earnings_type == u'年化收益率':
-            product_yield = (df.iloc[:,0].iat[-1] / df.iloc[:,0].iat[0] - 1) * 365.0 / (datetime.datetime.strptime(df.index[-1],'%Y-%m-%d') - datetime.datetime.strptime(df.index[0],'%Y-%m-%d')).days  # 最后一个除以第一个，减1
-        elif earnings_type == u'收益率':
-            product_yield = df.iloc[:,0].iat[-1] / df.iloc[:,0].iat[0] - 1  # 最后一个除以第一个，减1
-        else:
-            product_yield = None
-        retracement = min(df.iloc[:, 2].dropna())
-        earnings_retracement_ratio = product_yield / (-retracement)
-
-        return pd.Series([product_yield, retracement, earnings_retracement_ratio], index=[earnings_type, u'回撤', u'收益回撤比'])
+    # def simple_cal(self, ser, earnings_type):
+    #     if ser is None:
+    #         return None
+    #     df = pd.DataFrame(ser)
+    #     df['max'] = ''
+    #     df['target_col'] = ''
+    #     print df.shape
+    #     func_max = lambda date: max(df.iloc[:,0][df.index <= date])
+    #     for i in range(1, df.shape[0]):
+    #         value0 = df.iloc[i, 0]
+    #         date0 = df.index[i]
+    #         df.iloc[i, 1] = func_max(date0)
+    #         if value0 < func_max(date0):
+    #             df.iloc[i, 2] = (value0 / func_max(date0)) - 1
+    #         else:
+    #             df.iloc[i, 2] = 0
+    #
+    #
+    #     if earnings_type == u'年化收益率':
+    #         product_yield = (df.iloc[:,0].iat[-1] / df.iloc[:,0].iat[0] - 1) * 365.0 / (datetime.datetime.strptime(df.index[-1],'%Y-%m-%d') - datetime.datetime.strptime(df.index[0],'%Y-%m-%d')).days  # 最后一个除以第一个，减1
+    #     elif earnings_type == u'收益率':
+    #         product_yield = df.iloc[:,0].iat[-1] / df.iloc[:,0].iat[0] - 1  # 最后一个除以第一个，减1
+    #     else:
+    #         product_yield = None
+    #     retracement = min(df.iloc[:, 2].dropna())
+    #     earnings_retracement_ratio = product_yield / (-retracement)
+    #
+    #     return pd.Series([product_yield, retracement, earnings_retracement_ratio], index=[earnings_type, u'回撤', u'收益回撤比'])
 
 
     def data_display(self, fund_file='weekly_fund.txt'):
@@ -129,8 +129,8 @@ class compare_net_value(object):
                         'cal_net_asset_value': fund_code + u'折算基金净值',
                         'fitting_net_value': fund_code + u'拟合净值'}, axis=1).T.to_csv(u'compare_net_value_计算过程.csv', mode='a')
 
-                    func = lambda ser, date_str1, date_str2: ser[(pd.to_datetime(ser.index) >= datetime.datetime.strptime(date_str1, '%Y-%m-%d')) & (
-                                                                  pd.to_datetime(ser.index) <= datetime.datetime.strptime(date_str2, '%Y-%m-%d'))]
+                    # func = lambda ser, date_str1, date_str2: ser[(pd.to_datetime(ser.index) >= datetime.datetime.strptime(date_str1, '%Y-%m-%d')) & (
+                    #                                               pd.to_datetime(ser.index) <= datetime.datetime.strptime(date_str2, '%Y-%m-%d'))]
 
                     print u'计算全期数据'
                     df['value_date'] = df.index.tolist()
@@ -456,72 +456,72 @@ class compare_net_value(object):
         return 'compare_net_value.xls', u'compare_net_value_计算过程.csv'
 
 
-    def stock_fitting(self, date1='2017-10-21', date2='2018-01-01'):
-        # df = pd.read_json('stock_fitting_data.json', dtype=np.str)
-        with open('stock_fitting_data.json', 'r') as f:
-            json_data = json.load(f)
+    # def stock_fitting(self, date1='2017-10-21', date2='2018-01-01'):
+    #     # df = pd.read_json('stock_fitting_data.json', dtype=np.str)
+    #     with open('stock_fitting_data.json', 'r') as f:
+    #         json_data = json.load(f)
+    #
+    #     if os.path.exists(u'stock_fitting_计算过程.csv'):
+    #         os.remove(u'stock_fitting_计算过程.csv')
+    #
+    #     df_total = pd.DataFrame([])
+    #     for code in json_data:
+    #         ser = cal_fitting_net_value.single_fitting_net_value(json_data[code],date1,date2)
+    #         ser = ser.dropna()
+    #         ser.name = code
+    #         df = pd.DataFrame(ser)
+    #         df.T.to_csv(u'stock_fitting_计算过程.csv', mode='a')
+    #
+    #         df = df.reset_index()
+    #         df_total = df_total.append(calculation.earnings_cal(code, df, date_col='value_date', value_col=code, data_type='fund'), ignore_index=True)
+    #     print df_total
 
-        if os.path.exists(u'stock_fitting_计算过程.csv'):
-            os.remove(u'stock_fitting_计算过程.csv')
-
-        df_total = pd.DataFrame([])
-        for code in json_data:
-            ser = cal_fitting_net_value.single_fitting_net_value(json_data[code],date1,date2)
-            ser = ser.dropna()
-            ser.name = code
-            df = pd.DataFrame(ser)
-            df.T.to_csv(u'stock_fitting_计算过程.csv', mode='a')
-
-            df = df.reset_index()
-            df_total = df_total.append(calculation.earnings_cal(code, df, date_col='value_date', value_col=code, data_type='fund'), ignore_index=True)
-        print df_total
-
-    def estimate_vs_fitting(self):
-        with open(r'important_fund2.txt', 'r') as f:
-            fund_code_list = f.read().split('\n')
-
-        date_l = [
-            # ['2016-09-30', '2016-10-20', '2017-04-19'],
-            # ['2017-03-31', '2017-04-20', '2017-08-20'],
-            # ['2017-06-30', '2017-08-21', '2017-10-20'],
-            # ['2017-09-30', '2017-10-21', '2020-01-01'],
-            ['2017-09-30', '2017-09-29', '2020-01-01'],
-        ]
-        os.remove(u'estimate_vs_fitting_计算过程.csv') if os.path.exists(u'estimate_vs_fitting_计算过程.csv') else None
-        os.remove('estimate_vs_fitting.csv') if os.path.exists(u'estimate_vs_fitting_计算过程.csv') else None
-
-        summary_df = pd.DataFrame([])
-        start_time = time.time()
-        for fund_code in fund_code_list:
-            if not fund_code or re.search(r'^[^\d]+$', fund_code):
-                summary_df.loc[fund_code, :] = ''
-                print u'空白或标题行，略过'
-                continue
-
-            sql = """
-            SELECT `fund_code`, `value_date`, `estimate_daily_growth_rate` FROM `eastmoney_daily_data`
-            WHERE `fund_code` = '%s'
-            ORDER BY `value_date` DESC
-            LIMIT 1
-            """ %fund_code
-            with closing(pymysql.connect('10.10.10.15', 'spider', 'jlspider', 'spider', charset='utf8')) as conn:
-                estimate_df = pd.read_sql(sql, conn)
-            summary_df.loc[fund_code, u'日期'] = estimate_df['value_date'].iloc[0]
-            summary_df.loc[fund_code, u'预测净值日增长'] = estimate_df['estimate_daily_growth_rate'].iloc[0]
-
-            cal_net_value = cal_fitting_net_value.combine_net_value(fund_code, date_l)
-            cal_net_value.index = map(lambda s: datetime.datetime.strptime(s, '%Y-%m-%d').date(), cal_net_value.index.tolist())
-            cal_net_value = cal_net_value[cal_net_value.index <= estimate_df['value_date'].iloc[0]]
-            cal_net_value.name = fund_code
-
-            summary_df.loc[fund_code, u'拟合净值日增长'] = str(round((cal_net_value.iloc[-1] / cal_net_value.iloc[-2] - 1) * 100, 2)) + '%'
-
-            print summary_df
-
-            pd.DataFrame(cal_net_value).T.to_csv(u'estimate_vs_fitting_计算过程.csv', mode='a')
-            summary_df.to_csv('estimate_vs_fitting.csv', encoding='ascii')
-
-            print u'耗时:', time.time() - start_time
+    # def estimate_vs_fitting(self):
+    #     with open(r'important_fund2.txt', 'r') as f:
+    #         fund_code_list = f.read().split('\n')
+    #
+    #     date_l = [
+    #         # ['2016-09-30', '2016-10-20', '2017-04-19'],
+    #         # ['2017-03-31', '2017-04-20', '2017-08-20'],
+    #         # ['2017-06-30', '2017-08-21', '2017-10-20'],
+    #         # ['2017-09-30', '2017-10-21', '2020-01-01'],
+    #         ['2017-09-30', '2017-09-29', '2020-01-01'],
+    #     ]
+    #     os.remove(u'estimate_vs_fitting_计算过程.csv') if os.path.exists(u'estimate_vs_fitting_计算过程.csv') else None
+    #     os.remove('estimate_vs_fitting.csv') if os.path.exists(u'estimate_vs_fitting_计算过程.csv') else None
+    #
+    #     summary_df = pd.DataFrame([])
+    #     start_time = time.time()
+    #     for fund_code in fund_code_list:
+    #         if not fund_code or re.search(r'^[^\d]+$', fund_code):
+    #             summary_df.loc[fund_code, :] = ''
+    #             print u'空白或标题行，略过'
+    #             continue
+    #
+    #         sql = """
+    #         SELECT `fund_code`, `value_date`, `estimate_daily_growth_rate` FROM `eastmoney_daily_data`
+    #         WHERE `fund_code` = '%s'
+    #         ORDER BY `value_date` DESC
+    #         LIMIT 1
+    #         """ %fund_code
+    #         with closing(pymysql.connect('10.10.10.15', 'spider', 'jlspider', 'spider', charset='utf8')) as conn:
+    #             estimate_df = pd.read_sql(sql, conn)
+    #         summary_df.loc[fund_code, u'日期'] = estimate_df['value_date'].iloc[0]
+    #         summary_df.loc[fund_code, u'预测净值日增长'] = estimate_df['estimate_daily_growth_rate'].iloc[0]
+    #
+    #         cal_net_value = cal_fitting_net_value.combine_net_value(fund_code, date_l)
+    #         cal_net_value.index = map(lambda s: datetime.datetime.strptime(s, '%Y-%m-%d').date(), cal_net_value.index.tolist())
+    #         cal_net_value = cal_net_value[cal_net_value.index <= estimate_df['value_date'].iloc[0]]
+    #         cal_net_value.name = fund_code
+    #
+    #         summary_df.loc[fund_code, u'拟合净值日增长'] = str(round((cal_net_value.iloc[-1] / cal_net_value.iloc[-2] - 1) * 100, 2)) + '%'
+    #
+    #         print summary_df
+    #
+    #         pd.DataFrame(cal_net_value).T.to_csv(u'estimate_vs_fitting_计算过程.csv', mode='a')
+    #         summary_df.to_csv('estimate_vs_fitting.csv', encoding='ascii')
+    #
+    #         print u'耗时:', time.time() - start_time
 
 
 if __name__ == '__main__':

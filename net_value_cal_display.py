@@ -1237,7 +1237,8 @@ class net_value_cal_display(object):
     def privately_offered_fund(self):
         file_path = u"C:\\Users\\Administrator\\Desktop\\私募基金数据\\"
         title = [u"主策略", u"子策略", u"产品名称", u"管理人", u"成立日期", u"最新日期", u"最新净值",
-                 u"成立以来年化收益率", u"成立以来最大回撤", u"2017年收益率", u"2017年回撤", u"来源", u"尽调进程", u"备注"]
+                 u"成立以来年化收益率", u"成立以来最大回撤", u"成立以来年化收益回撤比",
+                 u"2017年收益率", u"2017年回撤", u"2017年年化收益回撤比", u"来源", u"尽调进程", u"备注"]
         output_df = pd.DataFrame([], columns=title)
         res = {}
         for dir_name in os.listdir(file_path):
@@ -1264,8 +1265,10 @@ class net_value_cal_display(object):
                     u"最新净值": df[df[u'日期']==newest_date][u'累计净值(分红不投资)'].iloc[0],
                     u"成立以来年化收益率":ser1.loc[u'年化收益率'],
                     u"成立以来最大回撤":ser1.loc[u'最大回撤'],
+                    u"成立以来年化收益回撤比":ser1.loc[u'年化收益回撤比'],
                     u"2017年收益率":ser2.loc[u'年化收益率'],
                     u"2017年回撤":ser2.loc[u'最大回撤'],
+                    u"2017年年化收益回撤比":ser2.loc[u'年化收益回撤比']
                 }, ignore_index=True)
 
                 detail_d = {
@@ -1292,17 +1295,17 @@ class net_value_cal_display(object):
                 res[product_name] = detail_d
 
 
-        output_df = output_df.sort_values([u"主策略", u"2017年收益率",], ascending=False)
+        output_df = output_df.sort_values([u"主策略", u"2017年年化收益回撤比",], ascending=False)
         for s in [u"成立以来年化收益率", u"成立以来最大回撤", u"2017年收益率", u"2017年回撤"]:
             output_df[s] = output_df[s].apply(lambda num: "{:0.2%}".format(num))
 
         writer = pd.ExcelWriter(u"私募排排网数据.xlsx")
 
-        # output_df.to_excel(writer, u"汇总表", index=None)
-        df0 = pd.DataFrame([])
-        for data_type in output_df[u"主策略"].drop_duplicates():
-            df0 = df0.append(output_df[output_df[u"主策略"] == data_type].head(10))
-        df0.to_excel(writer, u"汇总表", index=None)
+        output_df.to_excel(writer, u"汇总表", index=None)
+        # df0 = pd.DataFrame([])
+        # for data_type in output_df[u"主策略"].drop_duplicates():
+        #     df0 = df0.append(output_df[output_df[u"主策略"] == data_type].head(10))
+        # df0.to_excel(writer, u"汇总表", index=None)
 
         for data_type in output_df[u"主策略"].drop_duplicates():
             data_list = output_df[output_df[u"主策略"] == data_type].head(10)[u"产品名称"].tolist() # 每个策略的前十个产品
@@ -1365,10 +1368,10 @@ if __name__ == '__main__':
         net_value_cal_display = net_value_cal_display(method=sys.argv[1])
     else:
         net_value_cal_display = net_value_cal_display()
-    net_value_cal_display = net_value_cal_display.weekly_report()
+    # net_value_cal_display = net_value_cal_display.weekly_report()
     # net_value_cal_display.date_range_display()
     # net_value_cal_display.special_fund()
 
-    # net_value_cal_display.privately_offered_fund()
+    net_value_cal_display.privately_offered_fund()
 # http://dcfm.eastmoney.com//em_mutisvcexpandinterface/api/js/get?type=HSGTHDSTA&token=70f12f2f4f091e459a279469fe49eca5&filter=(SCODE=%27000063%27)&st=HDDATE&sr=-1&p=1&ps=50&js=var%20ANuhNwTP={pages:(tp),data:(x)}&rt=50437829
 # http://dcfm.eastmoney.com//em_mutisvcexpandinterface/api/js/get?type=HSGTHDSTA&token=1942f5da9b46b069953c873404aad4b5&filter=(SCODE=000063)&st=HDDATE&sr=-1&p=1&ps=1000
